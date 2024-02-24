@@ -2,6 +2,8 @@
 
 This project aims to offer linguistic analysis of legal acts of the Slovak Republic and other documents available on [Slov-Lex](https://www.slov-lex.sk/web/en).
 
+It was created as part of a report Analysis of law volume - revealing dormant potential (Analýza objemu zákonov - odhalenie spiaceho potenciálu, [HTML](https://www.iness.sk/sk/analyza-objemu-zakonov-odhalenie-spiaceho-potencialu), [PDF](https://www.iness.sk/sites/default/files/pictures/analyza_objemu_zakonov-odhalenie_spiaceho_potencialu.pdf)) for The Institute of Economic and Social Studies (INESS). It was also shortly mentioned in the [economic newsletter and podcast](https://e.dennikn.sk/minuta/3778916) of DennikN.
+
 So far it offers these metrics and outputs:
 
 - word_count
@@ -57,7 +59,11 @@ s_analysis("./Constitution", default_stop_words, 'o Ústave SR')
 - add additional metrics:
     - longest (shortest) sentences from `s_sentences()`
     - longest (shortest) words from `s_readability()`
+    - page count (conversion from character count)
     - number of internal and external hyperlinks in text
     - number of paragraphs
     - number of footnotes
+- generalize input
+    - make it easy to take any plain text format as an input
+    - try to add analysis for other contries <https://n-lex.europa.eu/n-lex/index?lang=en>
 -    graph of interconnected legal texts (already available on Slov-Lex 'Zobraziť graf k predpisu' (top right corner, icon of a pie chart without text))

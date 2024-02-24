@@ -63,6 +63,7 @@ def s_file_analysis(filename, stop_words=None):
                 "type_token_ratio": 0,
                 "sent_count": 0,
                 "avg_sent_length": 0,
+                "longest_sentences": {},
                 "FKGL": 0,
                 "GFI": 0,
                 "syllable_count": 0,
@@ -87,6 +88,7 @@ def s_file_analysis(filename, stop_words=None):
             "word_count_stop": counts['word_count_stop'],  # word count without stop words
             "sent_count": sentences['sent_count'],
             "avg_sent_length": sentences['avg_sent_length'],
+            "longest_sentences": sentences['longest_sentences'],
             "type_token_ratio": counts['type_token_ratio'],
             "FKGL": readability_c['FKGL'],
             "GFI": readability_c['GFI'],
