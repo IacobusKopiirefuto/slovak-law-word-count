@@ -85,20 +85,31 @@ def s_sentences(nlp_text):
         nlp_text (stanza.models.common.doc.Document): Stanza document representation.
 
     Returns:
-        dict: A dictionary containing the count of sentences and the average sentence length.
+        dict: A dictionary containing the count of sentences and the average sentence length,
+        and the 5 longest sentences.
     """
-    # Calculates the number of sentences
+    # Get the number of sentences and average sentence length
     sent_count = len(nlp_text.sentences)
+    avg_sent_length = sum(len(sentence.words) for sentence in nlp_text.sentences) / sent_count
 
-    sent_lengths = [len(sentence.words) for sentence in nlp_text.sentences]
+    # Get and `n_longest` sentences
 
-    # Calculate the average sentence length
-    avg_sent_length = sum(sent_lengths) / len(sent_lengths)
-    # compare with: `avg_sent_length = sum(sent_lengths) / sent_count` is output the same?
+    # Get the lengths of all sentences
+    sent_lengths = [(i, len(sentence.words)) for i, sentence in enumerate(nlp_text.sentences)]
+
+    # Sort sentences by length in descending order
+    sorted_sentences = sorted(sent_lengths, key=lambda x: x[1], reverse=True)
+
+    # Get the indices of the 5 longest sentences
+    longest_sentence_indices = [index for index, _ in sorted_sentences[:5]]
+
+    # Get the actual sentences using the indices
+    longest_sentences = [nlp_text.sentences[index].text for index in longest_sentence_indices]
 
     return {
                 "sent_count": sent_count,
                 "avg_sent_length": avg_sent_length,
+                "longest_sentences": longest_sentences,
             }
 
 
