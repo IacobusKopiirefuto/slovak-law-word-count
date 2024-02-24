@@ -2,7 +2,7 @@
 
 This project aims to offer linguistic analysis of legal acts of the Slovak Republic and other documents available on [Slov-Lex](https://www.slov-lex.sk/web/en).
 
-It was created as part of a report Analysis of law volume - revealing dormant potential (Analýza objemu zákonov - odhalenie spiaceho potenciálu, [HTML](https://www.iness.sk/sk/analyza-objemu-zakonov-odhalenie-spiaceho-potencialu), [PDF](https://www.iness.sk/sites/default/files/pictures/analyza_objemu_zakonov-odhalenie_spiaceho_potencialu.pdf)) for The Institute of Economic and Social Studies (INESS). It was also shortly mentioned in the [economic newsletter and podcast](https://e.dennikn.sk/minuta/3778916) of DennikN.
+It was created as part of a report Analysis of law volume - revealing dormant potential (Analýza objemu zákonov - odhalenie spiaceho potenciálu, [HTML](https://www.iness.sk/sk/analyza-objemu-zakonov-odhalenie-spiaceho-potencialu), [PDF](https://www.iness.sk/sites/default/files/pictures/analyza_objemu_zakonov-odhalenie_spiaceho_potencialu.pdf)) for The Institute of Economic and Social Studies (INESS). It was also shortly mentioned in the [short news](https://e.dennikn.sk/minuta/3778916) and [economic newsletter & podcast](https://e.dennikn.sk/3780222/ekonomicky-newsfilter-fico-sa-pred-svetovou-biznis-elitou-neblysol/) of DennikN.
 
 So far it offers these metrics and outputs:
 
