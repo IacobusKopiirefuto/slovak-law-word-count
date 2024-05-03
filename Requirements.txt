@@ -40,7 +40,7 @@ soupsieve==2.5
 stanza==1.6.1
 sympy==1.12
 torch==2.1.1
-tqdm==4.66.1
+tqdm==4.66.3
 triton==2.1.0
 typing_extensions==4.8.0
 urllib3==2.1.0
