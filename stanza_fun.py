@@ -43,6 +43,7 @@ import pyphen
 import stanza
 from stanza.pipeline.core import DownloadMethod
 
+
 def s_load(text):
     """
     Load text into Stanza for further processing.
@@ -54,8 +55,9 @@ def s_load(text):
         stanza.models.common.doc.Document: Stanza document representation.
     """
     # Initialize the Stanza pipeline
-    nlp = stanza.Pipeline(lang="sk",
-    download_method=DownloadMethod.REUSE_RESOURCES)  # , processors='tokenize, sentiment')
+    nlp = stanza.Pipeline(
+        lang="sk", download_method=DownloadMethod.REUSE_RESOURCES
+    )  # , processors='tokenize, sentiment')
 
     try:
         stanza.download("sk")
@@ -72,10 +74,10 @@ def s_load(text):
         print(f"Error downloading resources: {exception}")
         sys.exit(1)
 
-
     # Use Stanza to process the text
     nlp_text = nlp(text)
     return nlp_text
+
 
 def s_sentences(nlp_text):
     """
@@ -90,12 +92,16 @@ def s_sentences(nlp_text):
     """
     # Get the number of sentences and average sentence length
     sent_count = len(nlp_text.sentences)
-    avg_sent_length = sum(len(sentence.words) for sentence in nlp_text.sentences) / sent_count
+    avg_sent_length = (
+        sum(len(sentence.words) for sentence in nlp_text.sentences) / sent_count
+    )
 
     # Get and `n_longest` sentences
 
     # Get the lengths of all sentences
-    sent_lengths = [(i, len(sentence.words)) for i, sentence in enumerate(nlp_text.sentences)]
+    sent_lengths = [
+        (i, len(sentence.words)) for i, sentence in enumerate(nlp_text.sentences)
+    ]
 
     # Sort sentences by length in descending order
     sorted_sentences = sorted(sent_lengths, key=lambda x: x[1], reverse=True)
@@ -104,51 +110,53 @@ def s_sentences(nlp_text):
     longest_sentence_indices = [index for index, _ in sorted_sentences[:5]]
 
     # Get the actual sentences using the indices
-    longest_sentences = [nlp_text.sentences[index].text for index in longest_sentence_indices]
+    longest_sentences = [
+        nlp_text.sentences[index].text for index in longest_sentence_indices
+    ]
 
     return {
-                "sent_count": sent_count,
-                "avg_sent_length": avg_sent_length,
-                "longest_sentences": longest_sentences,
-            }
+        "sent_count": sent_count,
+        "avg_sent_length": avg_sent_length,
+        "longest_sentences": longest_sentences,
+    }
 
 
 def s_tags(nlp_text, word_count, stop_words=None):
     """
-    Count the frequency of each part-of-speech tag.
+        Count the frequency of each part-of-speech tag.
 
-    Args:
-        nlp_text (stanza.models.common.doc.Document): Stanza document representation.
-        word_count (int): The total number of words in the input text.
-        stop_words (list, optional): List of stop words to be excluded.
+        Args:
+            nlp_text (stanza.models.common.doc.Document): Stanza document representation.
+            word_count (int): The total number of words in the input text.
+            stop_words (list, optional): List of stop words to be excluded.
 
-    Returns:
-        dict: A dictionary containing the frequency of each part-of-speech tag.
+        Returns:
+            dict: A dictionary containing the frequency of each part-of-speech tag.
 
-    ````
-    abbreviations = {
-        'ADJ': 'adjective',
-        'ADP': 'adposition',
-        'ADV': 'adverb',
-        'AUX': 'auxiliary',
-        'CCONJ': 'coordinating conjunction',
-        'DET': 'determiner',
-        'INTJ': 'interjection',
-        'NOUN': 'noun',
-        'NUM': 'numeral',
-        'PART': 'particle',
-        'PRON': 'pronoun',
-        'PROPN': 'proper noun',
-        'PUNCT': 'punctuation',
-        'SCONJ': 'subordinating conjunction',
-        'SYM': 'symbol',
-        'VERB': 'verb',
-        'X': 'other'
-    }
-    ```
+        ````
+        abbreviations = {
+            'ADJ': 'adjective',
+            'ADP': 'adposition',
+            'ADV': 'adverb',
+            'AUX': 'auxiliary',
+            'CCONJ': 'coordinating conjunction',
+            'DET': 'determiner',
+            'INTJ': 'interjection',
+            'NOUN': 'noun',
+            'NUM': 'numeral',
+            'PART': 'particle',
+            'PRON': 'pronoun',
+            'PROPN': 'proper noun',
+            'PUNCT': 'punctuation',
+            'SCONJ': 'subordinating conjunction',
+            'SYM': 'symbol',
+            'VERB': 'verb',
+            'X': 'other'
+        }
+        ```
 
-    For further explanation of the tags see
-<https://universaldependencies.org/u/pos/>
+        For further explanation of the tags see
+    <https://universaldependencies.org/u/pos/>
     """
 
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
@@ -168,12 +176,12 @@ def s_tags(nlp_text, word_count, stop_words=None):
             else:
                 tag_counts[tag] += 1
 
-    tag_frequencies = {tag: count / word_count for tag,
-                       count in tag_counts.items()}
+    tag_frequencies = {tag: count / word_count for tag, count in tag_counts.items()}
 
     s_tag_word_count = sum(tag_counts.values())
 
     return tag_frequencies, s_tag_word_count
+
 
 def s_readability(nlp_text, word_count, sent_count):
     """
@@ -191,7 +199,7 @@ def s_readability(nlp_text, word_count, sent_count):
 
     Returns:
         dict: A dictionary containing the FKGL and GFI readability metrics.
-   """
+    """
 
     # Load the Pyphen hyphenation dictionary for Slovak
     dic = pyphen.Pyphen(lang="sk")
@@ -211,31 +219,31 @@ def s_readability(nlp_text, word_count, sent_count):
             if len(dic.inserted(token.text).split("-")) >= 3:
                 complex_word_count += 1
 
-    fkgl = 0.39 * (word_count / sent_count) + 11.8 * (syllable_count / word_count) - 15.59
+    fkgl = (
+        0.39 * (word_count / sent_count) + 11.8 * (syllable_count / word_count) - 15.59
+    )
     gfi = 0.4 * ((word_count / sent_count) + 100 * (complex_word_count / word_count))
     return {
-                "FKGL": fkgl,
-                "GFI": gfi,
-                "syllable_count": syllable_count,
-                "complex_word_count": complex_word_count,
-                "all_word_count": all_word_count,
-            }
-
+        "FKGL": fkgl,
+        "GFI": gfi,
+        "syllable_count": syllable_count,
+        "complex_word_count": complex_word_count,
+        "all_word_count": all_word_count,
+    }
 
 
 def s_lemma(nlp_text, stop_words=None):
     """
-   Lemmatize the words using Stanza.
+    Lemmatize the words using Stanza.
 
-    Args:
-        nlp_text (stanza.models.common.doc.Document): Stanza document representation.
-        stop_words (list, optional): List of stop words to be excluded.
+     Args:
+         nlp_text (stanza.models.common.doc.Document): Stanza document representation.
+         stop_words (list, optional): List of stop words to be excluded.
 
-    Returns:
-        Counter: A Counter object containing the frequency of each lemma.
+     Returns:
+         Counter: A Counter object containing the frequency of each lemma.
     """
     lemmas = []
-
 
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
     # stop_words default value is None and changes to [] only inside the function

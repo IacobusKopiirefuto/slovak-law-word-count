@@ -35,7 +35,8 @@ import csv
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-def csv_count_output(output, fields, csv_name='count_output'):
+
+def csv_count_output(output, fields, csv_name="count_output"):
     """
     Generates a CSV table for single-number metrics for all analyzed files.
 
@@ -51,7 +52,7 @@ def csv_count_output(output, fields, csv_name='count_output'):
         csv_count_output(output, ['word_count', 'char_count'], 'analysis_results')
     """
 
-    list_output = [['Date'] + fields]
+    list_output = [["Date"] + fields]
 
     # converts nested dictionary `output` to into a list of lists `list_output`
 
@@ -63,7 +64,7 @@ def csv_count_output(output, fields, csv_name='count_output'):
 
         # Extending the Row with Selected Fields in the Order of 'fields' List:
         for field in fields:
-            row.append(str(stats.get(field, '')))
+            row.append(str(stats.get(field, "")))
 
         # PREVIOUSLY USED FUNCTION
         # Extend the row with values for the selected fields
@@ -77,11 +78,11 @@ def csv_count_output(output, fields, csv_name='count_output'):
 
     # Define the custom sorting function
     def sort_function(row):
-        if row[0] == 'vyhlasene_znenie':
-            return float('-inf')
+        if row[0] == "vyhlasene_znenie":
+            return float("-inf")
         if row[0].isdigit():
             return int(row[0])
-        return float('inf')
+        return float("inf")
 
     # Sort the rows based on the custom function
     data_sorted = sorted(list_output[1:], key=sort_function)
@@ -90,7 +91,7 @@ def csv_count_output(output, fields, csv_name='count_output'):
     data_sorted.insert(0, list_output[0])
 
     # Write the sorted data to a new CSV file
-    with open(csv_name + '.csv', 'w', newline='', encoding="utf-8") as csvfile:
+    with open(csv_name + ".csv", "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(data_sorted)
 
@@ -109,7 +110,9 @@ def csv_lemma_out(output):
         csv_lemma_out(output)
     """
     for key, value in output.items():
-        with open(f"{key}_lemma_counts.csv", "w", newline="", encoding="utf-8") as csv_file:
+        with open(
+            f"{key}_lemma_counts.csv", "w", newline="", encoding="utf-8"
+        ) as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(["lemma", "count"])
             for lemma, count in value["lemma_counts"].items():
@@ -142,25 +145,25 @@ def csv_tag_out(output):
 
 def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=False):
     """
-     Generates a bar chart for a specified metric, with files ordered by year.
-     From each year only the latest file for that year is graphed.
+    Generates a bar chart for a specified metric, with files ordered by year.
+    From each year only the latest file for that year is graphed.
 
-     Parameters:
-         - `plot_data_variable` (str): The metric to be plotted
-         (e.g., 'word_count', 'char_count').
-         - `output` (dict): A dictionary containing analysis results for each file.
-         - `plot_title` (str): The title of the generated plot.
-         - `plot_ylabel` (str): The label for the y-axis of the generated plot.
-         - `show_plot` (bool): If True, the plot is displayed;
-         if False (default), the plot is saved.
+    Parameters:
+        - `plot_data_variable` (str): The metric to be plotted
+        (e.g., 'word_count', 'char_count').
+        - `output` (dict): A dictionary containing analysis results for each file.
+        - `plot_title` (str): The title of the generated plot.
+        - `plot_ylabel` (str): The label for the y-axis of the generated plot.
+        - `show_plot` (bool): If True, the plot is displayed;
+        if False (default), the plot is saved.
 
-     Returns:
-         None
-         saves {plot_data_variable}.png in a directory
+    Returns:
+        None
+        saves {plot_data_variable}.png in a directory
 
 
-     Usage:
-         plot_data('word_count', output, 'Word Count Analysis', 'Word Count')
+    Usage:
+        plot_data('word_count', output, 'Word Count Analysis', 'Word Count')
     """
     # Extract the last ID with each first 4 digits
     last_ids = {}
@@ -170,35 +173,41 @@ def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=Fal
             last_ids[date[:4]] = date
 
     # Get the data for plotting using the last IDs (excluding 'vyhlasenie_znenie')
-    word_counts = [(last_ids[date[:4]], data[plot_data_variable]) for date,
-    #               data in output.items() if date != 'vyhlasene_znenie']
-    # OLD: version only 'vyhlasene_znenie' is not plotted, NEW: only numerical are plotted
-                   data in output.items() if date.isdigit()]
+    word_counts = [
+        (last_ids[date[:4]], data[plot_data_variable])
+        for date, #               data in output.items() if date != 'vyhlasene_znenie']
+        # OLD: version only 'vyhlasene_znenie' is not plotted, NEW: only numerical are plotted
+        data in output.items()
+        if date.isdigit()
+    ]
     word_counts.sort(key=lambda x: x[0])  # Sort by date
 
     # Create x and y arrays for plotting
-    x_array = [item[0][:4] for item in word_counts]  # Display only the first four digits
+    x_array = [
+        item[0][:4] for item in word_counts
+    ]  # Display only the first four digits
     y_array = [item[1] for item in word_counts]
 
     # Plot the data
     plt.clf()  # Clear the plot before plotting new data
     plt.bar(x_array, y_array)  # Use plt.bar() for a bar graph
     plt.xticks(rotation=90)
-    plt.xlabel('rok')
+    plt.xlabel("rok")
     plt.ylabel(plot_ylabel)
     plt.title(plot_title)
-    plt.grid(axis='y')  # Add gridlines to the y-axis
+    plt.grid(axis="y")  # Add gridlines to the y-axis
     plt.tight_layout()
     if show_plot:
         plt.show()
     else:
-        plt.savefig(plot_data_variable + '.png')
+        plt.savefig(plot_data_variable + ".png")
     plt.clf()  # Clear the plot before plotting new data
 
 
 # from wordcloud import WordCloud
 
-def word_cloud(lemma_counts, file_name='wordcloud', stop_words=None, show_plot=False):
+
+def word_cloud(lemma_counts, file_name="wordcloud", stop_words=None, show_plot=False):
     """
     Creates a word cloud of the most frequent lemmatized words, excluding stop words.
 
@@ -228,12 +237,13 @@ def word_cloud(lemma_counts, file_name='wordcloud', stop_words=None, show_plot=F
     if stop_words is None:
         stop_words = []
 
-    lemma_counts = {word: count for word,
-                    count in lemma_counts.items() if word not in stop_words}
+    lemma_counts = {
+        word: count for word, count in lemma_counts.items() if word not in stop_words
+    }
 
-    word_cloud_data = WordCloud(width=800, height=800,
-                   background_color='white',
-                   min_font_size=10)
+    word_cloud_data = WordCloud(
+        width=800, height=800, background_color="white", min_font_size=10
+    )
     word_cloud_data.generate_from_frequencies(lemma_counts)
 
     plt.clf()  # Clear the plot before plotting new data
@@ -244,5 +254,5 @@ def word_cloud(lemma_counts, file_name='wordcloud', stop_words=None, show_plot=F
     if show_plot:
         plt.show()
     else:
-        plt.savefig(file_name + '.png', bbox_inches='tight')
+        plt.savefig(file_name + ".png", bbox_inches="tight")
     plt.clf()  # Clear the plot after plotting new data
