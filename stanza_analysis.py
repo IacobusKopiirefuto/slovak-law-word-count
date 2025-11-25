@@ -160,7 +160,10 @@ def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
     csv_tag_out(output)
     plot_data("word_count", output, "Vývoj počtu slov v " + nazov_zakonu, "počet slov")
     plot_data(
-        "char_count", output, "Vývoj počtu znakov v " + nazov_zakonu, "počet znakov",
+        "char_count",
+        output,
+        "Vývoj počtu znakov v " + nazov_zakonu,
+        "počet znakov",
     )
     plot_data("sent_count", output, "Vývoj počtu viet v " + nazov_zakonu, "počet viet")
     plot_data(

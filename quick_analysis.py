@@ -87,7 +87,10 @@ def q_analysis(folder_path, stop_words=None, nazov_zakona=""):
     csv_count_output(output, fields)
     plot_data("word_count", output, "Vývoj počtu slov v " + nazov_zakona, "počet slov")
     plot_data(
-        "char_count", output, "Vývoj počtu znakov v " + nazov_zakona, "počet znakov",
+        "char_count",
+        output,
+        "Vývoj počtu znakov v " + nazov_zakona,
+        "počet znakov",
     )
     plot_data(
         "type_token_ratio",

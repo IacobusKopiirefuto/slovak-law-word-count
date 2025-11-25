@@ -112,7 +112,10 @@ def csv_lemma_out(output) -> None:
     """
     for key, value in output.items():
         with open(
-            f"{key}_lemma_counts.csv", "w", newline="", encoding="utf-8",
+            f"{key}_lemma_counts.csv",
+            "w",
+            newline="",
+            encoding="utf-8",
         ) as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(["lemma", "count"])
@@ -144,7 +147,13 @@ def csv_tag_out(output) -> None:
                 writer.writerow([tag, count])
 
 
-def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=False) -> None:
+def plot_data(
+    plot_data_variable,
+    output,
+    plot_title,
+    plot_ylabel,
+    show_plot=False,
+) -> None:
     """
     Generates a bar chart for a specified metric, with files ordered by year.
     From each year only the latest file for that year is graphed.
@@ -176,9 +185,7 @@ def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=Fal
     # Get the data for plotting using the last IDs (excluding 'vyhlasenie_znenie')
     word_counts = [
         (last_ids[date[:4]], data[plot_data_variable])
-        for date, #               data in output.items() if date != 'vyhlasene_znenie']
-        # OLD: version only 'vyhlasene_znenie' is not plotted, NEW: only numerical are plotted
-        data in output.items()
+        for date, data in output.items()  # OLD: version only 'vyhlasene_znenie' is not plotted, NEW: only numerical are plotted  #               data in output.items() if date != 'vyhlasene_znenie']
         if date.isdigit()
     ]
     word_counts.sort(key=lambda x: x[0])  # Sort by date
@@ -208,7 +215,12 @@ def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=Fal
 # from wordcloud import WordCloud
 
 
-def word_cloud(lemma_counts, file_name="wordcloud", stop_words=None, show_plot=False) -> None:
+def word_cloud(
+    lemma_counts,
+    file_name="wordcloud",
+    stop_words=None,
+    show_plot=False,
+) -> None:
     """
     Creates a word cloud of the most frequent lemmatized words, excluding stop words.
 
@@ -243,7 +255,10 @@ def word_cloud(lemma_counts, file_name="wordcloud", stop_words=None, show_plot=F
     }
 
     word_cloud_data = WordCloud(
-        width=800, height=800, background_color="white", min_font_size=10,
+        width=800,
+        height=800,
+        background_color="white",
+        min_font_size=10,
     )
     word_cloud_data.generate_from_frequencies(lemma_counts)
 

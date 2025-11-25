@@ -54,7 +54,8 @@ def s_load(text):
     """
     # Initialize the Stanza pipeline
     nlp = stanza.Pipeline(
-        lang="sk", download_method=DownloadMethod.REUSE_RESOURCES,
+        lang="sk",
+        download_method=DownloadMethod.REUSE_RESOURCES,
     )  # , processors='tokenize, sentiment')
 
     try:
@@ -255,4 +256,3 @@ def s_lemma(nlp_text, stop_words=None):
                 lemmas.append(lemma)
 
     return Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= 5)
-
