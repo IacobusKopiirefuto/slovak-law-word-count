@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
 
-def csv_count_output(output, fields, csv_name="count_output"):
+def csv_count_output(output, fields, csv_name="count_output") -> None:
     """
     Generates a CSV table for single-number metrics for all analyzed files.
 
@@ -53,7 +53,7 @@ def csv_count_output(output, fields, csv_name="count_output"):
         csv_count_output(output, ['word_count', 'char_count'], 'analysis_results')
     """
 
-    list_output = [["Date"] + fields]
+    list_output = [["Date", *fields]]
 
     # converts nested dictionary `output` to into a list of lists `list_output`
 
@@ -97,7 +97,7 @@ def csv_count_output(output, fields, csv_name="count_output"):
         writer.writerows(data_sorted)
 
 
-def csv_lemma_out(output):
+def csv_lemma_out(output) -> None:
     """
     Writes out a CSV file with the most frequent lemmas for each analyzed file.
 
@@ -120,7 +120,7 @@ def csv_lemma_out(output):
                 writer.writerow([lemma, count])
 
 
-def csv_tag_out(output):
+def csv_tag_out(output) -> None:
     """
     Generates CSV tables for word category frequencies (tags) for each analyzed file.
     Additionally, creates an aggregated CSV file with all tag frequencies.
@@ -144,7 +144,7 @@ def csv_tag_out(output):
                 writer.writerow([tag, count])
 
 
-def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=False):
+def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=False) -> None:
     """
     Generates a bar chart for a specified metric, with files ordered by year.
     From each year only the latest file for that year is graphed.
@@ -168,7 +168,7 @@ def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=Fal
     """
     # Extract the last ID with each first 4 digits
     last_ids = {}
-    for date, data in output.items():
+    for date in output:
         # first_4_digits = date[:4]
         if date[:4] not in last_ids or date > last_ids[date[:4]]:
             last_ids[date[:4]] = date
@@ -208,7 +208,7 @@ def plot_data(plot_data_variable, output, plot_title, plot_ylabel, show_plot=Fal
 # from wordcloud import WordCloud
 
 
-def word_cloud(lemma_counts, file_name="wordcloud", stop_words=None, show_plot=False):
+def word_cloud(lemma_counts, file_name="wordcloud", stop_words=None, show_plot=False) -> None:
     """
     Creates a word cloud of the most frequent lemmatized words, excluding stop words.
 

@@ -107,7 +107,7 @@ def s_file_analysis(filename, stop_words=None):
     }
 
 
-def s_analysis(folder_path, stop_words=None, nazov_zakonu=""):
+def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
     """
     Analyzes all documents in a folder and generates output.
 

@@ -53,7 +53,7 @@ session.headers.update(
 )
 
 
-def download_links_from_table(url, save_path):
+def download_links_from_table(url, save_path) -> None:
     """
     Downloads links from the specified table on slov-lex.sk.
 
@@ -83,7 +83,7 @@ def download_links_from_table(url, save_path):
     process_table(table, url, save_path)
 
 
-def process_table(table, base_url, save_path):
+def process_table(table, base_url, save_path) -> None:
     """
     Processes rows of the table to download files.
 
@@ -98,7 +98,7 @@ def process_table(table, base_url, save_path):
         process_table_row(row, base_url, save_path)
 
 
-def process_table_row(row, base_url, save_path):
+def process_table_row(row, base_url, save_path) -> None:
     """
     Processes a single row of the table to download a file.
 
@@ -140,7 +140,7 @@ def get_download_url(href, base_url):
     return None
 
 
-def download_file(download_url, save_path):
+def download_file(download_url, save_path) -> None:
     """
     Downloads the file from the given URL.
 

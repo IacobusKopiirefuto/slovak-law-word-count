@@ -33,7 +33,7 @@ from stanza_analysis import s_analysis
 from stop_words_default import default_stop_words
 
 
-def analyze_folder(selected_folder_path):
+def analyze_folder(selected_folder_path) -> None:
     """
     Check if a valid folder path is provided and print the status.
 

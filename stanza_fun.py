@@ -73,8 +73,7 @@ def s_load(text):
         sys.exit(1)
 
     # Use Stanza to process the text
-    nlp_text = nlp(text)
-    return nlp_text
+    return nlp(text)
 
 
 def s_sentences(nlp_text):
@@ -255,6 +254,5 @@ def s_lemma(nlp_text, stop_words=None):
             if lemma.isalpha() and lemma not in stop_words:
                 lemmas.append(lemma)
 
-    lemma_counts = Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= 5)
+    return Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= 5)
 
-    return lemma_counts
