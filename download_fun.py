@@ -31,8 +31,8 @@ Usage:
 
 import os
 from urllib.parse import urljoin, urlparse
+
 import requests
-import ssl
 from bs4 import BeautifulSoup
 
 # Set the maximum supported TLS version to TLS 1.2 # slov-lex.sk does not support TLS 1.3
@@ -41,11 +41,19 @@ from bs4 import BeautifulSoup
 # Use the custom SSL context when making requests
 requests.adapters.DEFAULT_RETRIES = 5
 session = requests.Session()
-session.mount("https://", requests.adapters.HTTPAdapter(max_retries=requests.adapters.Retry(total=5)))
+session.mount(
+    "https://",
+    requests.adapters.HTTPAdapter(max_retries=requests.adapters.Retry(total=5)),
+)
 session.verify = True  # Set False for debugging
-session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
+session.headers.update(
+    {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    },
+)
 
-def download_links_from_table(url, save_path):
+
+def download_links_from_table(url, save_path) -> None:
     """
     Downloads links from the specified table on slov-lex.sk.
 
@@ -57,24 +65,25 @@ def download_links_from_table(url, save_path):
 
     try:
         response = requests.get(url, timeout=10)
-#        response = requests.get(url, headers=headers, timeout=10, verify=False)
+        #        response = requests.get(url, headers=headers, timeout=10, verify=False)
         response.raise_for_status()
     except requests.exceptions.SSLError as ssl_error:
         print(f"SSL Error: {ssl_error}")
         return
     except requests.exceptions.RequestException as error_name:
-        print(f"Error occurred while fetching the page: {str(error_name)}")
+        print(f"Error occurred while fetching the page: {error_name!s}")
         return
 
-    soup = BeautifulSoup(response.content, 'html.parser')
-    table = soup.find('table', id='HistoriaTable')
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", id="HistoriaTable")
     if table is None:
         print('Table with id "HistoriaTable" not found.')
         return
 
     process_table(table, url, save_path)
 
-def process_table(table, base_url, save_path):
+
+def process_table(table, base_url, save_path) -> None:
     """
     Processes rows of the table to download files.
 
@@ -83,12 +92,13 @@ def process_table(table, base_url, save_path):
         base_url (str): The base URL of the document page.
         save_path (str): The local directory where downloaded files will be saved.
     """
-    table_rows = table.find_all('tr')
+    table_rows = table.find_all("tr")
     # Extract links from the second column of the table
     for row in table_rows:
         process_table_row(row, base_url, save_path)
 
-def process_table_row(row, base_url, save_path):
+
+def process_table_row(row, base_url, save_path) -> None:
     """
     Processes a single row of the table to download a file.
 
@@ -97,14 +107,15 @@ def process_table_row(row, base_url, save_path):
         base_url (str): The base URL of the document page.
         save_path (str): The local directory where downloaded files will be saved.
     """
-    columns = row.find_all('td')
+    columns = row.find_all("td")
     if len(columns) >= 2:
         link_column = columns[1]
-        link = link_column.find('a')
+        link = link_column.find("a")
         if link:
-            download_url = get_download_url(link.get('href'), base_url)
+            download_url = get_download_url(link.get("href"), base_url)
             if download_url:
                 download_file(download_url, save_path)
+
 
 def get_download_url(href, base_url):
     """
@@ -119,16 +130,17 @@ def get_download_url(href, base_url):
     """
     if href:
         try:
-            if href.startswith('http'):
+            if href.startswith("http"):
                 return href
-            if href.startswith('/'):
+            if href.startswith("/"):
                 return urljoin(base_url, href[1:])
             return urljoin(base_url, href)
         except requests.exceptions.InvalidURL:
             print(f"Invalid URL: {href}")
     return None
 
-def download_file(download_url, save_path):
+
+def download_file(download_url, save_path) -> None:
     """
     Downloads the file from the given URL.
 
@@ -138,18 +150,18 @@ def download_file(download_url, save_path):
     """
     try:
         response = requests.get(download_url, timeout=10)
-#        response = requests.get(download_url, headers=headers, timeout=10, verify=False)
+        #        response = requests.get(download_url, headers=headers, timeout=10, verify=False)
         response.raise_for_status()
     except requests.exceptions.SSLError as ssl_error:
         print(f"SSL Error: {ssl_error}")
         return
     except requests.exceptions.RequestException as error_name:
-        print(f"Error occurred while downloading: {str(error_name)}")
+        print(f"Error occurred while downloading: {error_name!s}")
         return
 
-    filename = urlparse(download_url).path.split('/')[-1]
+    filename = urlparse(download_url).path.split("/")[-1]
     file_path = os.path.join(save_path, filename)
     print(file_path)
-    with open(file_path, 'wb') as file:
+    with open(file_path, "wb") as file:
         file.write(response.content)
     print(f"Downloaded: {download_url}")

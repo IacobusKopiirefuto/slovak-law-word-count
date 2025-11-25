@@ -24,13 +24,16 @@ Note:
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import os
+
 import PySimpleGUI as sg
-from stop_words_default import default_stop_words
+
+from download_fun import download_links_from_table
 from quick_analysis import q_analysis
 from stanza_analysis import s_analysis
-from download_fun import download_links_from_table
+from stop_words_default import default_stop_words
 
-def analyze_folder(selected_folder_path):
+
+def analyze_folder(selected_folder_path) -> None:
     """
     Check if a valid folder path is provided and print the status.
 
@@ -46,11 +49,12 @@ def analyze_folder(selected_folder_path):
     else:
         print("Invalid folder path:", selected_folder_path)
 
-#layout = [
+
+# layout = [
 #    [sg.Text("Select a folder:")],
 #    [sg.Input(), sg.FolderBrowse(key="folder_selector")],
 #    [sg.Button("Analyze")]
-#]
+# ]
 
 layout = [
     [sg.Text("Enter a URL:")],
@@ -58,7 +62,7 @@ layout = [
     [sg.Text("Select a folder:")],
     [sg.Input(), sg.FolderBrowse(key="folder_selector")],
     [sg.Text("Select analysis type:")],
-    [sg.Button("Full analysis"), sg.Button("Word and char count only")]
+    [sg.Button("Full analysis"), sg.Button("Word and char count only")],
 ]
 
 
@@ -79,7 +83,7 @@ while True:
         folder_path = values["folder_selector"]
         print(download_url)
         print(folder_path)
-#        sg.popup("Downloading data")
+        #        sg.popup("Downloading data")
         download_links_from_table(download_url, folder_path)
         sg.popup("Download completed")
 #        save_path = os.path.join(os.getcwd(), "downloaded_file")

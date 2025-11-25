@@ -2,19 +2,19 @@
 Processing Functions Module
 
 This module provides general-purpose functions for
-processing HTML files and extracting relevant information. 
+processing HTML files and extracting relevant information.
 It serves as the backbone for many other analysis scripts in this project.
 
 Functions:
-    - `load_html_file(filename)`: 
+    - `load_html_file(filename)`:
         Loads an HTML file, extracts the content
         within a specific div element, and returns the text.
 
-    - `simple_count(text, stop_words)`: 
-        Computes various text metrics, including word count, character count, 
+    - `simple_count(text, stop_words)`:
+        Computes various text metrics, including word count, character count,
         word count without stop words, and type-token ratio.
 
-    - `analyze_documents_in_folder(folder_path, process_func, stop_words=None)`: 
+    - `analyze_documents_in_folder(folder_path, process_func, stop_words=None)`:
         Analyzes HTML documents in a folder using a specified processing function.
         Allows for sorting documents based on specific criteria.
 
@@ -31,6 +31,7 @@ import os
 import sys
 
 from bs4 import BeautifulSoup
+
 
 def load_html_file(filename):
     """
@@ -59,6 +60,7 @@ def load_html_file(filename):
         sys.exit(1)
 
     return text
+
 
 def simple_count(text, stop_words=None):
     """
@@ -97,11 +99,12 @@ def simple_count(text, stop_words=None):
     type_token_ratio = len(set(words)) / len(words)
 
     return {
-            "word_count": word_count,  # word_count including stop words
-            "char_count": char_count,  # character count without spaces
-            "word_count_stop": word_count_stop,  # word count without stop words
-            "type_token_ratio": type_token_ratio,
-            }
+        "word_count": word_count,  # word_count including stop words
+        "char_count": char_count,  # character count without spaces
+        "word_count_stop": word_count_stop,  # word count without stop words
+        "type_token_ratio": type_token_ratio,
+    }
+
 
 def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
     """
@@ -129,29 +132,34 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
         stop_words = []
 
     analyzed_documents = {}
+
     def custom_key(value):
-        if value == 'vyhlasene_znenie.html':
+        if value == "vyhlasene_znenie.html":
             return 0
-        if value != 'vyhlasene_znenie.html':
+        if value != "vyhlasene_znenie.html":
             try:
-                return int(value.split('.')[0])
+                return int(value.split(".")[0])
             except ValueError:
-                return float('inf')
+                return float("inf")
         return None
 
     for file_name in sorted(os.listdir(folder_path), key=custom_key):
         # Check if file has an eight-digit number name followed by ".html" extension
         # Kinda duplicity, could be done in custom_kye
-        if not (file_name.endswith('.html') or
-                (file_name != "vyhlasene_znenie.html" and
-                 (not file_name[:-5].isdigit() or len(file_name[:-5]) != 8))):
+        if not (
+            file_name.endswith(".html")
+            or (
+                file_name != "vyhlasene_znenie.html"
+                and (not file_name[:-5].isdigit() or len(file_name[:-5]) != 8)
+            )
+        ):
             print(f"skipping file: {file_name}")
             continue
-        if file_name.endswith('.html'):
+        if file_name.endswith(".html"):
             document_name = file_name[:-5]  # Remove the .html suffix
             file_path = os.path.join(folder_path, file_name)
-#            with open(file_path, 'r') as file:
-#                html_content = file.read()
+            #            with open(file_path, 'r') as file:
+            #                html_content = file.read()
             analyzed_document = process_func(file_path, stop_words)
             analyzed_documents[document_name] = analyzed_document
     return analyzed_documents
