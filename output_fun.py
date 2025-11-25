@@ -32,6 +32,7 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import csv
+
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
@@ -111,7 +112,7 @@ def csv_lemma_out(output):
     """
     for key, value in output.items():
         with open(
-            f"{key}_lemma_counts.csv", "w", newline="", encoding="utf-8"
+            f"{key}_lemma_counts.csv", "w", newline="", encoding="utf-8",
         ) as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(["lemma", "count"])
@@ -242,7 +243,7 @@ def word_cloud(lemma_counts, file_name="wordcloud", stop_words=None, show_plot=F
     }
 
     word_cloud_data = WordCloud(
-        width=800, height=800, background_color="white", min_font_size=10
+        width=800, height=800, background_color="white", min_font_size=10,
     )
     word_cloud_data.generate_from_frequencies(lemma_counts)
 

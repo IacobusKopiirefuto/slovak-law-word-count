@@ -24,11 +24,13 @@ Note:
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import os
+
 import PySimpleGUI as sg
-from stop_words_default import default_stop_words
+
+from download_fun import download_links_from_table
 from quick_analysis import q_analysis
 from stanza_analysis import s_analysis
-from download_fun import download_links_from_table
+from stop_words_default import default_stop_words
 
 
 def analyze_folder(selected_folder_path):

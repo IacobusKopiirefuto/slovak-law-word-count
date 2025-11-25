@@ -31,8 +31,8 @@ Usage:
 
 import os
 from urllib.parse import urljoin, urlparse
+
 import requests
-import ssl
 from bs4 import BeautifulSoup
 
 # Set the maximum supported TLS version to TLS 1.2 # slov-lex.sk does not support TLS 1.3
@@ -48,8 +48,8 @@ session.mount(
 session.verify = True  # Set False for debugging
 session.headers.update(
     {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-    }
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    },
 )
 
 
@@ -71,7 +71,7 @@ def download_links_from_table(url, save_path):
         print(f"SSL Error: {ssl_error}")
         return
     except requests.exceptions.RequestException as error_name:
-        print(f"Error occurred while fetching the page: {str(error_name)}")
+        print(f"Error occurred while fetching the page: {error_name!s}")
         return
 
     soup = BeautifulSoup(response.content, "html.parser")
@@ -156,7 +156,7 @@ def download_file(download_url, save_path):
         print(f"SSL Error: {ssl_error}")
         return
     except requests.exceptions.RequestException as error_name:
-        print(f"Error occurred while downloading: {str(error_name)}")
+        print(f"Error occurred while downloading: {error_name!s}")
         return
 
     filename = urlparse(download_url).path.split("/")[-1]

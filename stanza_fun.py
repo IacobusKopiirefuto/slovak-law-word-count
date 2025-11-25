@@ -34,14 +34,12 @@ and official Stanza documentation <https://stanfordnlp.github.io/stanza/index.ht
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import sys
-
 from collections import Counter
-from urllib3.exceptions import NameResolutionError
 
 import pyphen
-
 import stanza
 from stanza.pipeline.core import DownloadMethod
+from urllib3.exceptions import NameResolutionError
 
 
 def s_load(text):
@@ -56,7 +54,7 @@ def s_load(text):
     """
     # Initialize the Stanza pipeline
     nlp = stanza.Pipeline(
-        lang="sk", download_method=DownloadMethod.REUSE_RESOURCES
+        lang="sk", download_method=DownloadMethod.REUSE_RESOURCES,
     )  # , processors='tokenize, sentiment')
 
     try:

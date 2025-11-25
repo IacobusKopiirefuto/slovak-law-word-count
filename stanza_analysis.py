@@ -24,7 +24,7 @@ from output_fun import (
     word_cloud,
 )
 from processing_fun import analyze_documents_in_folder, load_html_file, simple_count
-from stanza_fun import s_load, s_sentences, s_tags, s_readability, s_lemma
+from stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
 
 
 def s_file_analysis(filename, stop_words=None):
@@ -160,7 +160,7 @@ def s_analysis(folder_path, stop_words=None, nazov_zakonu=""):
     csv_tag_out(output)
     plot_data("word_count", output, "Vývoj počtu slov v " + nazov_zakonu, "počet slov")
     plot_data(
-        "char_count", output, "Vývoj počtu znakov v " + nazov_zakonu, "počet znakov"
+        "char_count", output, "Vývoj počtu znakov v " + nazov_zakonu, "počet znakov",
     )
     plot_data("sent_count", output, "Vývoj počtu viet v " + nazov_zakonu, "počet viet")
     plot_data(
