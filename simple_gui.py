@@ -20,15 +20,9 @@ Note:
 
 """
 
-import sys
 from pathlib import Path
 
 import PySimpleGUI
-
-ROOT = Path(__file__).resolve().parent
-SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
 
 
 # Copyright 2023 Jakub Škoda
@@ -52,7 +46,7 @@ def analyze_folder(selected_folder_path) -> None:
     None
 
     """
-    if Path.is_dir(selected_folder_path):
+    if Path(selected_folder_path).is_dir():
         # Perform document analysis here
         print("Analyzing folder:", selected_folder_path)
     else:
@@ -100,4 +94,3 @@ while True:
 #        print("File downloaded successfully:", save_path)
 
 window.close()
-
