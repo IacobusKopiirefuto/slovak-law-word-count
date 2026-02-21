@@ -40,6 +40,9 @@ import stanza
 from stanza.pipeline.core import DownloadMethod
 from urllib3.exceptions import NameResolutionError
 
+MIN_COMPLEX_WORD_SYLLABLES = 3
+MIN_LEMMA_FREQUENCY = 5
+
 
 def s_load(text):
     """Load text into Stanza for further processing.
@@ -211,7 +214,7 @@ def s_readability(nlp_text, word_count, sent_count):
             all_word_count += 1
             syllable_count += len(dic.inserted(token.text).split("-"))
             # Check if word is complex
-            if len(dic.inserted(token.text).split("-")) >= 3:
+            if len(dic.inserted(token.text).split("-")) >= MIN_COMPLEX_WORD_SYLLABLES:
                 complex_word_count += 1
 
     fkgl = (
@@ -252,4 +255,4 @@ def s_lemma(nlp_text, stop_words=None):
             if lemma.isalpha() and lemma not in stop_words:
                 lemmas.append(lemma)
 
-    return Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= 5)
+    return Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= MIN_LEMMA_FREQUENCY)

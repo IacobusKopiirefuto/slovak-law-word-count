@@ -56,6 +56,9 @@ session.headers.update(
     },
 )
 
+MIN_ROW_COLUMNS_FOR_LINK = 2
+LINK_COLUMN_INDEX = 1
+
 
 def _get_headers(accept: str) -> dict:
     """Headers matching a regular browser request to slov-lex.sk static API."""
@@ -132,8 +135,8 @@ def process_table_row(row, base_url, save_path) -> None:
 
     """
     columns = row.find_all("td")
-    if len(columns) >= 2:
-        link_column = columns[1]
+    if len(columns) >= MIN_ROW_COLUMNS_FOR_LINK:
+        link_column = columns[LINK_COLUMN_INDEX]
         link = link_column.find("a")
         if link:
             download_url = get_download_url(link.get("href"), base_url)

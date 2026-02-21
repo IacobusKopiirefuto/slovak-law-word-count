@@ -31,6 +31,10 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+FILE_EXTENSION_LENGTH = 5
+EXPECTED_DATE_FILENAME_LENGTH = 8
+PRIMARY_DOCUMENT_FILENAME = "vyhlasene_znenie.html"
+
 
 def load_html_file(filename):
     """Loads an HTML file, extracts text from a specific div element, and returns it.
@@ -132,15 +136,13 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
 
     analyzed_documents = {}
 
-    def custom_key(value):
-        if value == "vyhlasene_znenie.html":
+    def custom_key(value: str) -> int | float:
+        if value == PRIMARY_DOCUMENT_FILENAME:
             return 0
-        if value != "vyhlasene_znenie.html":
-            try:
-                return int(value.split(".")[0])
-            except ValueError:
-                return float("inf")
-        return None
+        try:
+            return int(value.split(".")[0])
+        except ValueError:
+            return float("inf")
 
     folder = Path(folder_path)
     for file_path in sorted(folder.iterdir(), key=lambda path: custom_key(path.name)):
@@ -150,14 +152,18 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
         if not (
             file_name.endswith(".html")
             or (
-                file_name != "vyhlasene_znenie.html"
-                and (not file_name[:-5].isdigit() or len(file_name[:-5]) != 8)
+                file_name != PRIMARY_DOCUMENT_FILENAME
+                and (
+                    not file_name[:-FILE_EXTENSION_LENGTH].isdigit()
+                    or len(file_name[:-FILE_EXTENSION_LENGTH])
+                    != EXPECTED_DATE_FILENAME_LENGTH
+                )
             )
         ):
             print(f"skipping file: {file_name}")
             continue
         if file_name.endswith(".html"):
-            document_name = file_name[:-5]  # Remove the .html suffix
+            document_name = file_name[:-FILE_EXTENSION_LENGTH]  # Remove the .html suffix
             #            with open(file_path, 'r') as file:
             #                html_content = file.read()
             analyzed_document = process_func(file_path, stop_words)

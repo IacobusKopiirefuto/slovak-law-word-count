@@ -40,6 +40,9 @@ try:
 except ImportError:
     WordCloud = None
 
+NEGATIVE_INFINITY = float("-inf")
+POSITIVE_INFINITY = float("inf")
+
 
 def csv_count_output(output, fields, csv_name="count_output") -> None:
     """Generates a CSV table for single-number metrics for all analyzed files.
@@ -69,8 +72,7 @@ def csv_count_output(output, fields, csv_name="count_output") -> None:
         row = [date]
 
         # Extending the Row with Selected Fields in the Order of 'fields' List:
-        for field in fields:
-            row.append(str(stats.get(field, "")))
+        row.extend(str(stats.get(field, "")) for field in fields)
 
         # PREVIOUSLY USED FUNCTION
         # Extend the row with values for the selected fields
@@ -83,12 +85,12 @@ def csv_count_output(output, fields, csv_name="count_output") -> None:
         list_output.append(row)
 
     # Define the custom sorting function
-    def sort_function(row):
+    def sort_function(row: list[str]) -> int | float:
         if row[0] == "vyhlasene_znenie":
-            return float("-inf")
+            return NEGATIVE_INFINITY
         if row[0].isdigit():
             return int(row[0])
-        return float("inf")
+        return POSITIVE_INFINITY
 
     # Sort the rows based on the custom function
     data_sorted = sorted(list_output[1:], key=sort_function)
@@ -159,7 +161,8 @@ def plot_data(
     output,
     plot_title,
     plot_ylabel,
-    show_plot=False,
+    *,
+    show_plot: bool = False,
 ) -> None:
     """Generates a bar chart for a specified metric, with files ordered by year.
     From each year only the latest file for that year is graphed.
@@ -228,7 +231,8 @@ def word_cloud(
     lemma_counts,
     file_name="wordcloud",
     stop_words=None,
-    show_plot=False,
+    *,
+    show_plot: bool = False,
 ) -> None:
     """Creates a word cloud of the most frequent lemmatized words, excluding stop words.
 
