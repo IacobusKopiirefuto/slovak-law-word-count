@@ -31,6 +31,7 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import csv
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +46,7 @@ NEGATIVE_INFINITY = float("-inf")
 POSITIVE_INFINITY = float("inf")
 
 AnalysisOutput = dict[str, dict[str, Any]]
+logger = logging.getLogger(__name__)
 
 
 def csv_count_output(
@@ -213,11 +215,11 @@ def word_cloud(
     """
     # Check if lemma_counts is empty and return early if true
     if not lemma_counts:
-        print("Lemma counts is empty. Skipping word cloud generation.")
+        logger.warning("Lemma counts is empty. Skipping word cloud generation.")
         return
 
     if WordCloud is None:
-        print(
+        logger.warning(
             "Skipping word cloud generation: install extra 'stanza' for wordcloud support.",
         )
         return

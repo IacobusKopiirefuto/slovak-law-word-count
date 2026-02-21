@@ -15,6 +15,7 @@ Functions:
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import os
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +31,7 @@ from .stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
 
 PathLike = str | Path
 AnalysisResult = dict[str, Any]
+logger = logging.getLogger(__name__)
 
 
 def s_file_analysis(
@@ -59,7 +61,7 @@ def s_file_analysis(
     text = load_html_file(filename)
 
     if text is None:
-        print("Could not find div element.")
+        logger.warning("Could not find div element.")
         # Return a default dictionary with all values set to 0 or an empty list
         return {
             "word_count": 0,  # word_count including stop words

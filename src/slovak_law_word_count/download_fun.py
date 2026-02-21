@@ -28,6 +28,7 @@ Usage:
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
+import logging
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
@@ -60,6 +61,7 @@ session.headers.update(
 MIN_ROW_COLUMNS_FOR_LINK = 2
 LINK_COLUMN_INDEX = 1
 PathLike = str | Path
+logger = logging.getLogger(__name__)
 
 
 def _get_headers(accept: str) -> dict:
@@ -92,10 +94,10 @@ def download_links_from_table(url: str, save_path: PathLike) -> None:
         )
         response.raise_for_status()
     except requests.exceptions.SSLError as ssl_error:
-        print(f"SSL Error: {ssl_error}")
+        logger.error("SSL Error: %s", ssl_error)
         return
     except requests.exceptions.RequestException as error_name:
-        print(f"Error occurred while fetching the page: {error_name!s}")
+        logger.error("Error occurred while fetching the page: %s", error_name)
         return
 
     content_type = response.headers.get("Content-Type", "").lower()
@@ -106,7 +108,7 @@ def download_links_from_table(url: str, save_path: PathLike) -> None:
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", id="HistoriaTable")
     if table is None:
-        print('Table with id "HistoriaTable" not found.')
+        logger.warning('Table with id "HistoriaTable" not found.')
         return
 
     process_table(table, url, save_path)
@@ -165,7 +167,7 @@ def get_download_url(href: str | None, base_url: str) -> str | None:
                 return urljoin(base_url, href[1:])
             return urljoin(base_url, href)
         except requests.exceptions.InvalidURL:
-            print(f"Invalid URL: {href}")
+            logger.error("Invalid URL: %s", href)
     return None
 
 
@@ -185,20 +187,20 @@ def download_file(download_url: str, save_path: PathLike) -> None:
         )
         response.raise_for_status()
     except requests.exceptions.SSLError as ssl_error:
-        print(f"SSL Error: {ssl_error}")
+        logger.error("SSL Error: %s", ssl_error)
         return
     except requests.exceptions.RequestException as error_name:
-        print(f"Error occurred while downloading: {error_name!s}")
+        logger.error("Error occurred while downloading: %s", error_name)
         return
 
     filename = urlparse(download_url).path.split("/")[-1]
     save_dir = Path(save_path)
     save_dir.mkdir(parents=True, exist_ok=True)
     file_path = save_dir / filename
-    print(file_path)
+    logger.info("%s", file_path)
     with file_path.open("wb") as file:
         file.write(response.content)
-    print(f"Downloaded: {download_url}")
+    logger.info("Downloaded: %s", download_url)
 
 
 def save_response_content(
@@ -213,5 +215,5 @@ def save_response_content(
     file_path = save_dir / filename
     with file_path.open("wb") as file:
         file.write(response.content)
-    print(file_path)
-    print(f"Downloaded: {url}")
+    logger.info("%s", file_path)
+    logger.info("Downloaded: %s", url)

@@ -20,6 +20,7 @@ Note:
 
 """
 
+import logging
 from pathlib import Path
 
 import PySimpleGUI
@@ -27,9 +28,13 @@ import PySimpleGUI
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 from slovak_law_word_count.download_fun import download_links_from_table
+from slovak_law_word_count.logging_config import setup_logging
 from slovak_law_word_count.quick_analysis import q_analysis
 from slovak_law_word_count.stanza_analysis import s_analysis
 from slovak_law_word_count.stop_words_default import default_stop_words
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def analyze_folder(selected_folder_path: str) -> None:
@@ -41,9 +46,9 @@ def analyze_folder(selected_folder_path: str) -> None:
     """
     if Path(selected_folder_path).is_dir():
         # Perform document analysis here
-        print("Analyzing folder:", selected_folder_path)
+        logger.info("Analyzing folder: %s", selected_folder_path)
     else:
-        print("Invalid folder path:", selected_folder_path)
+        logger.warning("Invalid folder path: %s", selected_folder_path)
 
 
 # layout = [
@@ -80,13 +85,13 @@ while True:
     if event == "Download":
         download_url = values["url_input"]
         folder_path = values["folder_selector"]
-        print(download_url)
-        print(folder_path)
+        logger.info("%s", download_url)
+        logger.info("%s", folder_path)
         #        sg.popup("Downloading data")
         download_links_from_table(download_url, folder_path)
         PySimpleGUI.popup("Download completed")
 #        save_path = os.path.join(os.getcwd(), "downloaded_file")
 #        download_file(download_url, save_path)
-#        print("File downloaded successfully:", save_path)
+#        logger.info("File downloaded successfully: %s", save_path)
 
 window.close()

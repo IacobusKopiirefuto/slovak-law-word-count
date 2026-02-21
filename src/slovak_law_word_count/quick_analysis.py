@@ -26,6 +26,7 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import os
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +35,7 @@ from .processing_fun import analyze_documents_in_folder, load_html_file, simple_
 
 PathLike = str | Path
 AnalysisResult = dict[str, Any]
+logger = logging.getLogger(__name__)
 
 
 def q_file_analysis(
@@ -54,7 +56,7 @@ def q_file_analysis(
     text = load_html_file(filename)
 
     if text is None:
-        print("Could not find div element.")
+        logger.warning("Could not find div element.")
         # Return a default dictionary with all values set to 0 or an empty list
         return {
             "word_count": 0,  # word_count including stop words
@@ -91,7 +93,7 @@ def q_analysis(
     output = analyze_documents_in_folder(folder_path, q_file_analysis, stop_words)
     os.chdir(folder_path)
 
-    print(output)
+    logger.info("%s", output)
 
     fields = ["word_count", "char_count", "word_count_stop", "type_token_ratio"]
 

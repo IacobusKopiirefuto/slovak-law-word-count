@@ -27,6 +27,7 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import sys
+import logging
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -37,6 +38,7 @@ FILE_EXTENSION_LENGTH = 5
 EXPECTED_DATE_FILENAME_LENGTH = 8
 PRIMARY_DOCUMENT_FILENAME = "vyhlasene_znenie.html"
 PathLike = str | Path
+logger = logging.getLogger(__name__)
 
 
 def load_html_file(filename: PathLike) -> str | None:
@@ -49,7 +51,7 @@ def load_html_file(filename: PathLike) -> str | None:
         str or None: The extracted text if found, else None.
 
     """
-    print(f"processed file: {filename}")
+    logger.info("processed file: %s", filename)
     with Path(filename).open(encoding="utf-8") as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
@@ -62,7 +64,7 @@ def load_html_file(filename: PathLike) -> str | None:
     text = div.get_text()
 
     if not isinstance(text, str):
-        print("Error: 'text' is not a string. Ending the script.")
+        logger.error("Error: 'text' is not a string. Ending the script.")
         sys.exit(1)
 
     return text
@@ -84,7 +86,7 @@ def simple_count(text: str, stop_words: list[str] | None = None) -> dict[str, fl
 
     """
     if not isinstance(text, str):
-        print("Error: 'text' is not a string. Ending the script.")
+        logger.error("Error: 'text' is not a string. Ending the script.")
         sys.exit(1)
 
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
@@ -166,7 +168,7 @@ def analyze_documents_in_folder(
                 )
             )
         ):
-            print(f"skipping file: {file_name}")
+            logger.info("skipping file: %s", file_name)
             continue
         if file_name.endswith(".html"):
             document_name = file_name[

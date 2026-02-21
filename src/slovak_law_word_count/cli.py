@@ -3,6 +3,7 @@
 import argparse
 
 from .download_fun import download_links_from_table
+from .logging_config import setup_logging
 from .stop_words_default import default_stop_words
 
 
@@ -36,6 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     """Parse CLI arguments and run the selected analysis mode."""
+    setup_logging()
     args = build_parser().parse_args()
 
     if args.download_url:

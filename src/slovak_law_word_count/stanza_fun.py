@@ -33,6 +33,7 @@ and official Stanza documentation <https://stanfordnlp.github.io/stanza/index.ht
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import sys
+import logging
 from collections import Counter
 
 import pyphen
@@ -43,6 +44,7 @@ from urllib3.exceptions import NameResolutionError
 
 MIN_COMPLEX_WORD_SYLLABLES = 3
 MIN_LEMMA_FREQUENCY = 5
+logger = logging.getLogger(__name__)
 
 
 def s_load(text: str) -> Document:
@@ -64,16 +66,19 @@ def s_load(text: str) -> Document:
     try:
         stanza.download("sk")
     except ConnectionError as conn_error:
-        print(f"Connection error while downloading resources: {conn_error}")
+        logger.error("Connection error while downloading resources: %s", conn_error)
         sys.exit(1)
     except NameResolutionError as dns_error:
-        print(f"Failed to resolve host while downloading resources: {dns_error}")
+        logger.error(
+            "Failed to resolve host while downloading resources: %s",
+            dns_error,
+        )
         sys.exit(1)
     except stanza.exceptions.DoesNotExistError as exception:
-        print(f"Error downloading resources: {exception}")
+        logger.error("Error downloading resources: %s", exception)
         sys.exit(1)
     except stanza.exceptions.StanzaResourceException as exception:
-        print(f"Error downloading resources: {exception}")
+        logger.error("Error downloading resources: %s", exception)
         sys.exit(1)
 
     # Use Stanza to process the text
