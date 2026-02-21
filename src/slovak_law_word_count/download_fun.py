@@ -33,6 +33,7 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 # Set the maximum supported TLS version to TLS 1.2 # slov-lex.sk does not support TLS 1.3
 # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -58,6 +59,7 @@ session.headers.update(
 
 MIN_ROW_COLUMNS_FOR_LINK = 2
 LINK_COLUMN_INDEX = 1
+PathLike = str | Path
 
 
 def _get_headers(accept: str) -> dict:
@@ -72,7 +74,7 @@ def _get_headers(accept: str) -> dict:
     }
 
 
-def download_links_from_table(url, save_path) -> None:
+def download_links_from_table(url: str, save_path: PathLike) -> None:
     """Downloads links from the specified table on slov-lex.sk.
 
     Args:
@@ -110,7 +112,7 @@ def download_links_from_table(url, save_path) -> None:
     process_table(table, url, save_path)
 
 
-def process_table(table, base_url, save_path) -> None:
+def process_table(table: Tag, base_url: str, save_path: PathLike) -> None:
     """Processes rows of the table to download files.
 
     Args:
@@ -125,7 +127,7 @@ def process_table(table, base_url, save_path) -> None:
         process_table_row(row, base_url, save_path)
 
 
-def process_table_row(row, base_url, save_path) -> None:
+def process_table_row(row: Tag, base_url: str, save_path: PathLike) -> None:
     """Processes a single row of the table to download a file.
 
     Args:
@@ -144,7 +146,7 @@ def process_table_row(row, base_url, save_path) -> None:
                 download_file(download_url, save_path)
 
 
-def get_download_url(href, base_url):
+def get_download_url(href: str | None, base_url: str) -> str | None:
     """Gets the download URL based on the href.
 
     Args:
@@ -167,7 +169,7 @@ def get_download_url(href, base_url):
     return None
 
 
-def download_file(download_url, save_path) -> None:
+def download_file(download_url: str, save_path: PathLike) -> None:
     """Downloads the file from the given URL.
 
     Args:
@@ -199,7 +201,11 @@ def download_file(download_url, save_path) -> None:
     print(f"Downloaded: {download_url}")
 
 
-def save_response_content(url, response, save_path) -> None:
+def save_response_content(
+    url: str,
+    response: requests.Response,
+    save_path: PathLike,
+) -> None:
     """Persist already-downloaded response bytes to disk."""
     filename = urlparse(url).path.split("/")[-1]
     save_dir = Path(save_path)

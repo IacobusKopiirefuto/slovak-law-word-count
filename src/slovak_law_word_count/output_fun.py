@@ -32,6 +32,7 @@ For more detailed information, refer to the individual function docstrings.
 
 import csv
 from pathlib import Path
+from typing import Any
 
 import matplotlib.pyplot as plt
 
@@ -43,8 +44,14 @@ except ImportError:
 NEGATIVE_INFINITY = float("-inf")
 POSITIVE_INFINITY = float("inf")
 
+AnalysisOutput = dict[str, dict[str, Any]]
 
-def csv_count_output(output, fields, csv_name="count_output") -> None:
+
+def csv_count_output(
+    output: AnalysisOutput,
+    fields: list[str],
+    csv_name: str = "count_output",
+) -> None:
     """Generates a CSV table for single-number metrics for all analyzed files.
 
     Parameters
@@ -104,7 +111,7 @@ def csv_count_output(output, fields, csv_name="count_output") -> None:
         writer.writerows(data_sorted)
 
 
-def csv_lemma_out(output) -> None:
+def csv_lemma_out(output: AnalysisOutput) -> None:
     """Writes out a CSV file with the most frequent lemmas for each analyzed file.
 
     Parameters
@@ -131,7 +138,7 @@ def csv_lemma_out(output) -> None:
                 writer.writerow([lemma, count])
 
 
-def csv_tag_out(output) -> None:
+def csv_tag_out(output: AnalysisOutput) -> None:
     """Generates CSV tables for word category frequencies (tags) for each analyzed file.
     Additionally, creates an aggregated CSV file with all tag frequencies.
 
@@ -157,10 +164,10 @@ def csv_tag_out(output) -> None:
 
 
 def plot_data(
-    plot_data_variable,
-    output,
-    plot_title,
-    plot_ylabel,
+    plot_data_variable: str,
+    output: AnalysisOutput,
+    plot_title: str,
+    plot_ylabel: str,
     *,
     show_plot: bool = False,
 ) -> None:
@@ -228,9 +235,9 @@ def plot_data(
 
 
 def word_cloud(
-    lemma_counts,
-    file_name="wordcloud",
-    stop_words=None,
+    lemma_counts: dict[str, int],
+    file_name: str = "wordcloud",
+    stop_words: list[str] | None = None,
     *,
     show_plot: bool = False,
 ) -> None:

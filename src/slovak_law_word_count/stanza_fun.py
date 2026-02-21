@@ -37,6 +37,7 @@ from collections import Counter
 
 import pyphen
 import stanza
+from stanza.models.common.doc import Document
 from stanza.pipeline.core import DownloadMethod
 from urllib3.exceptions import NameResolutionError
 
@@ -44,7 +45,7 @@ MIN_COMPLEX_WORD_SYLLABLES = 3
 MIN_LEMMA_FREQUENCY = 5
 
 
-def s_load(text):
+def s_load(text: str) -> Document:
     """Load text into Stanza for further processing.
 
     Args:
@@ -79,7 +80,7 @@ def s_load(text):
     return nlp(text)
 
 
-def s_sentences(nlp_text):
+def s_sentences(nlp_text: Document) -> dict[str, int | float | list[str]]:
     """Calculate the number of sentences and their average length.
 
     Args:
@@ -121,7 +122,11 @@ def s_sentences(nlp_text):
     }
 
 
-def s_tags(nlp_text, word_count, stop_words=None):
+def s_tags(
+    nlp_text: Document,
+    word_count: int,
+    stop_words: list[str] | None = None,
+) -> tuple[dict[str, float], int]:
     """Count the frequency of each part-of-speech tag.
 
     Args:
@@ -182,7 +187,11 @@ def s_tags(nlp_text, word_count, stop_words=None):
     return tag_frequencies, s_tag_word_count
 
 
-def s_readability(nlp_text, word_count, sent_count):
+def s_readability(
+    nlp_text: Document,
+    word_count: int,
+    sent_count: int,
+) -> dict[str, float]:
     """Estimate the reading level required to understand the text by
     calculating FKGL (Flesch-Kincaid Grade level) and GFI (Gunning Fog Index).
 
@@ -230,7 +239,7 @@ def s_readability(nlp_text, word_count, sent_count):
     }
 
 
-def s_lemma(nlp_text, stop_words=None):
+def s_lemma(nlp_text: Document, stop_words: list[str] | None = None) -> Counter[str]:
     """Lemmatize the words using Stanza.
 
     Args:
@@ -255,4 +264,6 @@ def s_lemma(nlp_text, stop_words=None):
             if lemma.isalpha() and lemma not in stop_words:
                 lemmas.append(lemma)
 
-    return Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= MIN_LEMMA_FREQUENCY)
+    return Counter(
+        lemma for lemma in lemmas if lemmas.count(lemma) >= MIN_LEMMA_FREQUENCY
+    )

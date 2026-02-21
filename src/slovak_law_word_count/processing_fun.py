@@ -27,16 +27,19 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from bs4 import BeautifulSoup
 
 FILE_EXTENSION_LENGTH = 5
 EXPECTED_DATE_FILENAME_LENGTH = 8
 PRIMARY_DOCUMENT_FILENAME = "vyhlasene_znenie.html"
+PathLike = str | Path
 
 
-def load_html_file(filename):
+def load_html_file(filename: PathLike) -> str | None:
     """Loads an HTML file, extracts text from a specific div element, and returns it.
 
     Args:
@@ -65,7 +68,7 @@ def load_html_file(filename):
     return text
 
 
-def simple_count(text, stop_words=None):
+def simple_count(text: str, stop_words: list[str] | None = None) -> dict[str, float]:
     """Computes basic text metrics including word count, character count,
     word count without stop words, and type-token ratio.
 
@@ -109,7 +112,11 @@ def simple_count(text, stop_words=None):
     }
 
 
-def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
+def analyze_documents_in_folder(
+    folder_path: PathLike,
+    process_func: Callable[[Path, list[str]], dict[str, Any]],
+    stop_words: list[str] | None = None,
+) -> dict[str, dict[str, Any]]:
     """Analyzes documents in a folder using a specified processing function.
 
     Documents names are sorted in this order:
@@ -163,7 +170,9 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
             print(f"skipping file: {file_name}")
             continue
         if file_name.endswith(".html"):
-            document_name = file_name[:-FILE_EXTENSION_LENGTH]  # Remove the .html suffix
+            document_name = file_name[
+                :-FILE_EXTENSION_LENGTH
+            ]  # Remove the .html suffix
             #            with open(file_path, 'r') as file:
             #                html_content = file.read()
             analyzed_document = process_func(file_path, stop_words)

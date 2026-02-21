@@ -14,6 +14,8 @@ Functions:
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import os
+from pathlib import Path
+from typing import Any
 
 from .output_fun import (
     csv_count_output,
@@ -25,8 +27,14 @@ from .output_fun import (
 from .processing_fun import analyze_documents_in_folder, load_html_file, simple_count
 from .stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
 
+PathLike = str | Path
+AnalysisResult = dict[str, Any]
 
-def s_file_analysis(filename, stop_words=None):
+
+def s_file_analysis(
+    filename: PathLike,
+    stop_words: list[str] | None = None,
+) -> AnalysisResult:
     """Analyzes a single document using various linguistic metrics.
 
     Parameters
@@ -108,7 +116,11 @@ def s_file_analysis(filename, stop_words=None):
     }
 
 
-def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
+def s_analysis(
+    folder_path: PathLike,
+    stop_words: list[str] | None = None,
+    nazov_zakonu: str = "",
+) -> None:
     """Analyzes all documents in a folder and generates output.
 
     Parameters

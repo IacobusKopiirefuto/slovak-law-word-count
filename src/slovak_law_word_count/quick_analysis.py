@@ -26,12 +26,20 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import os
+from pathlib import Path
+from typing import Any
 
 from .output_fun import csv_count_output, plot_data
 from .processing_fun import analyze_documents_in_folder, load_html_file, simple_count
 
+PathLike = str | Path
+AnalysisResult = dict[str, Any]
 
-def q_file_analysis(filename, stop_words=None):
+
+def q_file_analysis(
+    filename: PathLike,
+    stop_words: list[str] | None = None,
+) -> AnalysisResult:
     """Analyzes an HTML file and returns basic text metrics.
 
     Args:
@@ -64,7 +72,11 @@ def q_file_analysis(filename, stop_words=None):
     }
 
 
-def q_analysis(folder_path, stop_words=None, nazov_zakona=""):
+def q_analysis(
+    folder_path: PathLike,
+    stop_words: list[str] | None = None,
+    nazov_zakona: str = "",
+) -> dict[str, AnalysisResult]:
     """Runs analysis on all HTML files in a folder using q_file_analysis.
 
     Args:

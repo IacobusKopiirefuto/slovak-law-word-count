@@ -24,17 +24,15 @@ from pathlib import Path
 
 import PySimpleGUI
 
-
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
-
 from slovak_law_word_count.download_fun import download_links_from_table
 from slovak_law_word_count.quick_analysis import q_analysis
 from slovak_law_word_count.stanza_analysis import s_analysis
 from slovak_law_word_count.stop_words_default import default_stop_words
 
 
-def analyze_folder(selected_folder_path) -> None:
+def analyze_folder(selected_folder_path: str) -> None:
     """Check if a valid folder path is provided and print the status.
 
     Parameters
@@ -65,7 +63,10 @@ layout = [
     [PySimpleGUI.Text("Select a folder:")],
     [PySimpleGUI.Input(), PySimpleGUI.FolderBrowse(key="folder_selector")],
     [PySimpleGUI.Text("Select analysis type:")],
-    [PySimpleGUI.Button("Full analysis"), PySimpleGUI.Button("Word and char count only")],
+    [
+        PySimpleGUI.Button("Full analysis"),
+        PySimpleGUI.Button("Word and char count only"),
+    ],
 ]
 
 
