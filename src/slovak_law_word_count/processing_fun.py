@@ -26,8 +26,8 @@ For more detailed information, refer to the individual function docstrings.
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
-import os
 import sys
+from pathlib import Path
 
 from bs4 import BeautifulSoup
 
@@ -43,7 +43,7 @@ def load_html_file(filename):
 
     """
     print(f"processed file: {filename}")
-    with open(filename, encoding="utf-8") as html_file:
+    with Path(filename).open(encoding="utf-8") as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
     # Find the desired div element by its class and ID
@@ -142,7 +142,9 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
                 return float("inf")
         return None
 
-    for file_name in sorted(os.listdir(folder_path), key=custom_key):
+    folder = Path(folder_path)
+    for file_path in sorted(folder.iterdir(), key=lambda path: custom_key(path.name)):
+        file_name = file_path.name
         # Check if file has an eight-digit number name followed by ".html" extension
         # Kinda duplicity, could be done in custom_kye
         if not (
@@ -156,7 +158,6 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
             continue
         if file_name.endswith(".html"):
             document_name = file_name[:-5]  # Remove the .html suffix
-            file_path = os.path.join(folder_path, file_name)
             #            with open(file_path, 'r') as file:
             #                html_content = file.read()
             analyzed_document = process_func(file_path, stop_words)

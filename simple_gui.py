@@ -23,6 +23,8 @@ Note:
 import sys
 from pathlib import Path
 
+import PySimpleGUI
+
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
@@ -31,10 +33,6 @@ if str(SRC) not in sys.path:
 
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
-
-import os
-
-import PySimpleGUI as sg
 
 from slovak_law_word_count.download_fun import download_links_from_table
 from slovak_law_word_count.quick_analysis import q_analysis
@@ -54,7 +52,7 @@ def analyze_folder(selected_folder_path) -> None:
     None
 
     """
-    if os.path.isdir(selected_folder_path):
+    if Path.is_dir(selected_folder_path):
         # Perform document analysis here
         print("Analyzing folder:", selected_folder_path)
     else:
@@ -68,20 +66,20 @@ def analyze_folder(selected_folder_path) -> None:
 # ]
 
 layout = [
-    [sg.Text("Enter a URL:")],
-    [sg.Input(key="url_input"), sg.Button("Download")],
-    [sg.Text("Select a folder:")],
-    [sg.Input(), sg.FolderBrowse(key="folder_selector")],
-    [sg.Text("Select analysis type:")],
-    [sg.Button("Full analysis"), sg.Button("Word and char count only")],
+    [PySimpleGUI.Text("Enter a URL:")],
+    [PySimpleGUI.Input(key="url_input"), PySimpleGUI.Button("Download")],
+    [PySimpleGUI.Text("Select a folder:")],
+    [PySimpleGUI.Input(), PySimpleGUI.FolderBrowse(key="folder_selector")],
+    [PySimpleGUI.Text("Select analysis type:")],
+    [PySimpleGUI.Button("Full analysis"), PySimpleGUI.Button("Word and char count only")],
 ]
 
 
-window = sg.Window("Document Analyzer", layout)
+window = PySimpleGUI.Window("Document Analyzer", layout)
 
 while True:
     event, values = window.read()
-    if event == sg.WINDOW_CLOSED:
+    if event == PySimpleGUI.WINDOW_CLOSED:
         break
     if event == "Word and char count only":
         folder_path = values["folder_selector"]
@@ -96,9 +94,10 @@ while True:
         print(folder_path)
         #        sg.popup("Downloading data")
         download_links_from_table(download_url, folder_path)
-        sg.popup("Download completed")
+        PySimpleGUI.popup("Download completed")
 #        save_path = os.path.join(os.getcwd(), "downloaded_file")
 #        download_file(download_url, save_path)
 #        print("File downloaded successfully:", save_path)
 
 window.close()
+

@@ -28,7 +28,7 @@ Usage:
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
-import os
+from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -187,10 +187,11 @@ def download_file(download_url, save_path) -> None:
         return
 
     filename = urlparse(download_url).path.split("/")[-1]
-    file_path = os.path.join(save_path, filename)
-    os.makedirs(save_path, exist_ok=True)
+    save_dir = Path(save_path)
+    save_dir.mkdir(parents=True, exist_ok=True)
+    file_path = save_dir / filename
     print(file_path)
-    with open(file_path, "wb") as file:
+    with file_path.open("wb") as file:
         file.write(response.content)
     print(f"Downloaded: {download_url}")
 
@@ -198,9 +199,10 @@ def download_file(download_url, save_path) -> None:
 def save_response_content(url, response, save_path) -> None:
     """Persist already-downloaded response bytes to disk."""
     filename = urlparse(url).path.split("/")[-1]
-    file_path = os.path.join(save_path, filename)
-    os.makedirs(save_path, exist_ok=True)
-    with open(file_path, "wb") as file:
+    save_dir = Path(save_path)
+    save_dir.mkdir(parents=True, exist_ok=True)
+    file_path = save_dir / filename
+    with file_path.open("wb") as file:
         file.write(response.content)
     print(file_path)
     print(f"Downloaded: {url}")

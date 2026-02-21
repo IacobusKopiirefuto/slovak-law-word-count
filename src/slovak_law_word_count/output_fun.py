@@ -31,6 +31,7 @@ For more detailed information, refer to the individual function docstrings.
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import csv
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 
@@ -91,7 +92,7 @@ def csv_count_output(output, fields, csv_name="count_output") -> None:
     data_sorted.insert(0, list_output[0])
 
     # Write the sorted data to a new CSV file
-    with open(csv_name + ".csv", "w", newline="", encoding="utf-8") as csvfile:
+    with Path(f"{csv_name}.csv").open("w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(data_sorted)
 
@@ -112,8 +113,7 @@ def csv_lemma_out(output) -> None:
 
     """
     for key, value in output.items():
-        with open(
-            f"{key}_lemma_counts.csv",
+        with Path(f"{key}_lemma_counts.csv").open(
             "w",
             newline="",
             encoding="utf-8",
@@ -142,7 +142,7 @@ def csv_tag_out(output) -> None:
 
     """
     for key, value in output.items():
-        with open(f"{key}_tag.csv", "w", newline="", encoding="utf-8") as csv_file:
+        with Path(f"{key}_tag.csv").open("w", newline="", encoding="utf-8") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(["tag", "count"])
             for tag, count in value["tag_frequencies"].items():
