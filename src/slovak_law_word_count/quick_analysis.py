@@ -25,8 +25,8 @@ For more detailed information, refer to the individual function docstrings.
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
-import os
 import logging
+import os
 from pathlib import Path
 from typing import Any
 

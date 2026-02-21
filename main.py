@@ -1,7 +1,7 @@
 """Run the default stanza analysis example."""
 
-from slovak_law_word_count.stanza_analysis import s_analysis
 from slovak_law_word_count.logging_config import setup_logging
+from slovak_law_word_count.stanza_analysis import s_analysis
 from slovak_law_word_count.stop_words_default import default_stop_words
 
 

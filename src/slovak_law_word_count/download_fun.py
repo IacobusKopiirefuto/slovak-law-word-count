@@ -93,11 +93,11 @@ def download_links_from_table(url: str, save_path: PathLike) -> None:
             timeout=10,
         )
         response.raise_for_status()
-    except requests.exceptions.SSLError as ssl_error:
-        logger.error("SSL Error: %s", ssl_error)
+    except requests.exceptions.SSLError:
+        logger.exception("SSL Error")
         return
-    except requests.exceptions.RequestException as error_name:
-        logger.error("Error occurred while fetching the page: %s", error_name)
+    except requests.exceptions.RequestException:
+        logger.exception("Error occurred while fetching the page")
         return
 
     content_type = response.headers.get("Content-Type", "").lower()
@@ -167,7 +167,7 @@ def get_download_url(href: str | None, base_url: str) -> str | None:
                 return urljoin(base_url, href[1:])
             return urljoin(base_url, href)
         except requests.exceptions.InvalidURL:
-            logger.error("Invalid URL: %s", href)
+            logger.exception("Invalid URL: %s", href)
     return None
 
 
@@ -186,11 +186,11 @@ def download_file(download_url: str, save_path: PathLike) -> None:
             timeout=10,
         )
         response.raise_for_status()
-    except requests.exceptions.SSLError as ssl_error:
-        logger.error("SSL Error: %s", ssl_error)
+    except requests.exceptions.SSLError:
+        logger.exception("SSL Error")
         return
-    except requests.exceptions.RequestException as error_name:
-        logger.error("Error occurred while downloading: %s", error_name)
+    except requests.exceptions.RequestException:
+        logger.exception("Error occurred while downloading")
         return
 
     filename = urlparse(download_url).path.split("/")[-1]

@@ -14,8 +14,8 @@ Functions:
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
-import os
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -119,7 +119,7 @@ def s_analysis(
         folder_path: Path to the folder containing documents.
         stop_words: Optional stop words excluded from selected metrics.
         nazov_zakonu: Law name used in chart titles.
-    
+
     Save in the {folder_path}:
         - {key}_lemma_counts.csv, {key}_tag.csv for every analyzed file in the directory
         - count_output.csv with all single number metrics for all analyzed files
