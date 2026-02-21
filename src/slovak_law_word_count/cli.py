@@ -1,6 +1,10 @@
 """Command-line interface for slovak-law-word-count."""
 
 import argparse
+from importlib import import_module
+
+from .download_fun import download_links_from_table
+from .stop_words_default import default_stop_words
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -32,19 +36,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
-    from .download_fun import download_links_from_table
-    from .stop_words_default import default_stop_words
 
     if args.download_url:
         download_links_from_table(args.download_url, args.folder)
 
     if args.mode == "stanza":
-        from .stanza_analysis import s_analysis
-
+        s_analysis = import_module("slovak_law_word_count.stanza_analysis").s_analysis
         s_analysis(args.folder, default_stop_words, args.law_name)
     else:
-        from .quick_analysis import q_analysis
-
+        q_analysis = import_module("slovak_law_word_count.quick_analysis").q_analysis
         q_analysis(args.folder, default_stop_words, args.law_name)
 
 

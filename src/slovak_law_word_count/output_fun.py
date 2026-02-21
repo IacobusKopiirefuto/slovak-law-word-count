@@ -35,6 +35,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
+try:
+    from wordcloud import WordCloud
+except ImportError:
+    WordCloud = None
+
 
 def csv_count_output(output, fields, csv_name="count_output") -> None:
     """Generates a CSV table for single-number metrics for all analyzed files.
@@ -250,9 +255,7 @@ def word_cloud(
         print("Lemma counts is empty. Skipping word cloud generation.")
         return
 
-    try:
-        from wordcloud import WordCloud
-    except ImportError:
+    if WordCloud is None:
         print(
             "Skipping word cloud generation: install extra 'stanza' for wordcloud support.",
         )
