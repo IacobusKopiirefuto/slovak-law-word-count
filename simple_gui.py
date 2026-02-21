@@ -33,15 +33,10 @@ from slovak_law_word_count.stop_words_default import default_stop_words
 
 
 def analyze_folder(selected_folder_path: str) -> None:
-    """Check if a valid folder path is provided and print the status.
+    """Check whether a provided folder path is valid and print the status.
 
-    Parameters
-    ----------
-    - selected_folder_path (str): The path to the selected folder.
-
-    Returns
-    -------
-    None
+    Args:
+        selected_folder_path: Path to the selected folder.
 
     """
     if Path(selected_folder_path).is_dir():

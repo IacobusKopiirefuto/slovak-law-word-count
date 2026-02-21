@@ -6,6 +6,7 @@ from slovak_law_word_count.stop_words_default import default_stop_words
 
 
 def main() -> None:
+    """Download and run the stanza analysis example."""
     download_links_from_table(
         "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701",
         "./Constitution",

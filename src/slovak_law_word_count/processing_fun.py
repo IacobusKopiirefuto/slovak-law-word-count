@@ -40,7 +40,7 @@ PathLike = str | Path
 
 
 def load_html_file(filename: PathLike) -> str | None:
-    """Loads an HTML file, extracts text from a specific div element, and returns it.
+    """Load an HTML file and return text from the target div element.
 
     Args:
         filename (str): The path to the HTML file.
@@ -69,11 +69,10 @@ def load_html_file(filename: PathLike) -> str | None:
 
 
 def simple_count(text: str, stop_words: list[str] | None = None) -> dict[str, float]:
-    """Computes basic text metrics including word count, character count,
-    word count without stop words, and type-token ratio.
+    """Compute basic text metrics.
 
-    Type toke ratio is dividing the number of unique words by
-    the total number of words in the text.
+    Compute word count, character count, stop-word-filtered word count, and
+    type-token ratio for the given text.
 
     Args:
         text (str): The input text.

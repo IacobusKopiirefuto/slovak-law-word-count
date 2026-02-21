@@ -1,4 +1,5 @@
 """Module for analyzing documents using functions from stanza_fun.py.
+
 Provides more complex results compared to quick_analysis.py.
 
 Functions:
@@ -35,23 +36,11 @@ def s_file_analysis(
     filename: PathLike,
     stop_words: list[str] | None = None,
 ) -> AnalysisResult:
-    """Analyzes a single document using various linguistic metrics.
+    """Analyze a single document and compute linguistic metrics.
 
-    Parameters
-    ----------
-    - filename (str): The path to the document file.
-    - stop_words (list): List of stop words to be excluded from analysis.
-
-    Returns
-    -------
-    dict: Dictionary containing various linguistic metrics.
-
-    Example:
-    ```python
-    from stanza_fun import s_file_analysis
-    from stop_words_default import default_stop_words
-    result = s_file_analysis("/path/to/document.html", default_stop_words)
-    ```
+    Args:
+        filename: Path to the document file.
+        stop_words: Optional stop words excluded from selected metrics.
 
     Metrics:
     - 'word_count': Total word count including stop words.
@@ -64,6 +53,7 @@ def s_file_analysis(
     - 'GFI': Gunning Fog Index.
     - 'tag_frequencies': Frequencies of different word categories.
     - 'lemma_counts': Frequencies of lemmatized words.
+
 
     """
     text = load_html_file(filename)
@@ -121,16 +111,13 @@ def s_analysis(
     stop_words: list[str] | None = None,
     nazov_zakonu: str = "",
 ) -> None:
-    """Analyzes all documents in a folder and generates output.
+    """Analyze all documents in a folder and generate outputs.
 
-    Parameters
-    ----------
-    - folder_path (str): The path to the folder containing documents.
-    - stop_words (list): List of stop words to be excluded from analysis.
-    - nazov_zakonu (str): Name of the law, used in plot titles.
-
-    Returns: nothigs
-
+    Args:
+        folder_path: Path to the folder containing documents.
+        stop_words: Optional stop words excluded from selected metrics.
+        nazov_zakonu: Law name used in chart titles.
+    
     Save in the {folder_path}:
         - {key}_lemma_counts.csv, {key}_tag.csv for every analyzed file in the directory
         - count_output.csv with all single number metrics for all analyzed files

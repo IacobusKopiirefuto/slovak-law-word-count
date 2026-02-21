@@ -52,20 +52,12 @@ def csv_count_output(
     fields: list[str],
     csv_name: str = "count_output",
 ) -> None:
-    """Generates a CSV table for single-number metrics for all analyzed files.
+    """Generate a CSV table for single-number metrics for all analyzed files.
 
-    Parameters
-    ----------
-        - `output` (dict): A nested dictionary containing analysis results for each file.
-        - `fields` (list): A list of metric names to include in the CSV table.
-        - `csv_name` (str): The desired name of the output CSV file (default is 'count_output').
-
-    Returns
-    -------
-        None
-
-    Usage:
-        csv_count_output(output, ['word_count', 'char_count'], 'analysis_results')
+    Args:
+        output: Nested dictionary with analysis results for each file.
+        fields: Metric names to include in the CSV table.
+        csv_name: Output CSV base name (without extension).
 
     """
     list_output = [["Date", *fields]]
@@ -112,18 +104,10 @@ def csv_count_output(
 
 
 def csv_lemma_out(output: AnalysisOutput) -> None:
-    """Writes out a CSV file with the most frequent lemmas for each analyzed file.
+    """Write a CSV file with the most frequent lemmas for each analyzed file.
 
-    Parameters
-    ----------
-        - `output` (dict): A dictionary containing analysis results for each file.
-
-    Returns
-    -------
-        None
-
-    Usage:
-        csv_lemma_out(output)
+    Args:
+        output: Dictionary containing analysis results for each file.
 
     """
     for key, value in output.items():
@@ -139,20 +123,10 @@ def csv_lemma_out(output: AnalysisOutput) -> None:
 
 
 def csv_tag_out(output: AnalysisOutput) -> None:
-    """Generates CSV tables for word category frequencies (tags) for each analyzed file.
-    Additionally, creates an aggregated CSV file with all tag frequencies.
+    """Generate CSV tables for word-category frequencies for each analyzed file.
 
-    Parameters
-    ----------
-        - `output` (dict): A dictionary containing analysis results for each file.
-
-    Returns
-    -------
-        None
-        saves {key}_tag.csv in a directory
-
-    Usage:
-        csv_tag_out(output)
+    Args:
+        output: Dictionary containing analysis results for each file.
 
     """
     for key, value in output.items():
@@ -171,27 +145,14 @@ def plot_data(
     *,
     show_plot: bool = False,
 ) -> None:
-    """Generates a bar chart for a specified metric, with files ordered by year.
-    From each year only the latest file for that year is graphed.
+    """Generate a bar chart for one metric, ordered by year.
 
-    Parameters
-    ----------
-        - `plot_data_variable` (str): The metric to be plotted
-        (e.g., 'word_count', 'char_count').
-        - `output` (dict): A dictionary containing analysis results for each file.
-        - `plot_title` (str): The title of the generated plot.
-        - `plot_ylabel` (str): The label for the y-axis of the generated plot.
-        - `show_plot` (bool): If True, the plot is displayed;
-        if False (default), the plot is saved.
-
-    Returns
-    -------
-        None
-        saves {plot_data_variable}.png in a directory
-
-
-    Usage:
-        plot_data('word_count', output, 'Word Count Analysis', 'Word Count')
+    Args:
+        plot_data_variable: Metric key to plot (for example, `word_count`).
+        output: Dictionary containing analysis results for each file.
+        plot_title: Plot title.
+        plot_ylabel: Y-axis label.
+        show_plot: If `True`, display the plot instead of saving it.
 
     """
     # Extract the last ID with each first 4 digits
@@ -241,24 +202,13 @@ def word_cloud(
     *,
     show_plot: bool = False,
 ) -> None:
-    """Creates a word cloud of the most frequent lemmatized words, excluding stop words.
+    """Create a word cloud of frequent lemmas while excluding stop words.
 
-    Parameters
-    ----------
-        - `lemma_counts` (dict): A dictionary containing lemma counts for each analyzed file.
-        - `file_name` (str): The desired name of the output word cloud image
-        (default is 'wordcloud').
-        - `show_plot` (bool): If True, the word cloud is displayed; if False (default),
-        it is saved.
-        - `stop_words` (list): A list of stop words to be excluded from the word cloud.
-
-    Returns
-    -------
-        None
-        save's {file_name}.png in a directory
-
-    Usage:
-        word_cloud(output['file_name']['lemma_counts'], 'wordcloud', True, default_stop_words)
+    Args:
+        lemma_counts: Mapping of lemma to frequency.
+        file_name: Output image base name.
+        stop_words: Stop words to remove before rendering.
+        show_plot: If `True`, display the plot instead of saving it.
 
     """
     # Check if lemma_counts is empty and return early if true

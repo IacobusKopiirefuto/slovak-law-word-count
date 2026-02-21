@@ -192,8 +192,10 @@ def s_readability(
     word_count: int,
     sent_count: int,
 ) -> dict[str, float]:
-    """Estimate the reading level required to understand the text by
-    calculating FKGL (Flesch-Kincaid Grade level) and GFI (Gunning Fog Index).
+    """Estimate text readability with FKGL and GFI.
+
+    Estimate the reading level required to understand the text by calculating
+    FKGL (Flesch-Kincaid Grade level) and GFI (Gunning Fog Index).
 
     Complex words are here defined as words with three or more syllables.
 

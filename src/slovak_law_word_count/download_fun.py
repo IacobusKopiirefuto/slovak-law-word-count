@@ -75,7 +75,7 @@ def _get_headers(accept: str) -> dict:
 
 
 def download_links_from_table(url: str, save_path: PathLike) -> None:
-    """Downloads links from the specified table on slov-lex.sk.
+    """Download links from the specified table on slov-lex.sk.
 
     Args:
         url (str): The URL of the document page on slov-lex.sk.
@@ -113,7 +113,7 @@ def download_links_from_table(url: str, save_path: PathLike) -> None:
 
 
 def process_table(table: Tag, base_url: str, save_path: PathLike) -> None:
-    """Processes rows of the table to download files.
+    """Process rows of the table to download files.
 
     Args:
         table (bs4.element.Tag): The BeautifulSoup Tag representing the table.
@@ -128,7 +128,7 @@ def process_table(table: Tag, base_url: str, save_path: PathLike) -> None:
 
 
 def process_table_row(row: Tag, base_url: str, save_path: PathLike) -> None:
-    """Processes a single row of the table to download a file.
+    """Process a single row of the table to download a file.
 
     Args:
         row (bs4.element.Tag): The BeautifulSoup Tag representing a table row.
@@ -147,7 +147,7 @@ def process_table_row(row: Tag, base_url: str, save_path: PathLike) -> None:
 
 
 def get_download_url(href: str | None, base_url: str) -> str | None:
-    """Gets the download URL based on the href.
+    """Get the download URL based on the href.
 
     Args:
         href (str): The href attribute of the link.
@@ -170,7 +170,7 @@ def get_download_url(href: str | None, base_url: str) -> str | None:
 
 
 def download_file(download_url: str, save_path: PathLike) -> None:
-    """Downloads the file from the given URL.
+    """Download the file from the given URL.
 
     Args:
         download_url (str): The URL of the file to be downloaded.

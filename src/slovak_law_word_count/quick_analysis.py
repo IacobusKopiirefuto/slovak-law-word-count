@@ -77,7 +77,7 @@ def q_analysis(
     stop_words: list[str] | None = None,
     nazov_zakona: str = "",
 ) -> dict[str, AnalysisResult]:
-    """Runs analysis on all HTML files in a folder using q_file_analysis.
+    """Run analysis on all HTML files in a folder using `q_file_analysis`.
 
     Args:
         folder_path (str): The path to the folder containing HTML files.
