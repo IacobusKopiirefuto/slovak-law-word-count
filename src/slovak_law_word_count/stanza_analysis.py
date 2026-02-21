@@ -1,5 +1,4 @@
-"""
-Module for analyzing documents using functions from stanza_fun.py.
+"""Module for analyzing documents using functions from stanza_fun.py.
 Provides more complex results compared to quick_analysis.py.
 
 Functions:
@@ -28,14 +27,15 @@ from .stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
 
 
 def s_file_analysis(filename, stop_words=None):
-    """
-    Analyzes a single document using various linguistic metrics.
+    """Analyzes a single document using various linguistic metrics.
 
-    Parameters:
+    Parameters
+    ----------
     - filename (str): The path to the document file.
     - stop_words (list): List of stop words to be excluded from analysis.
 
-    Returns:
+    Returns
+    -------
     dict: Dictionary containing various linguistic metrics.
 
     Example:
@@ -56,6 +56,7 @@ def s_file_analysis(filename, stop_words=None):
     - 'GFI': Gunning Fog Index.
     - 'tag_frequencies': Frequencies of different word categories.
     - 'lemma_counts': Frequencies of lemmatized words.
+
     """
     text = load_html_file(filename)
 
@@ -108,10 +109,10 @@ def s_file_analysis(filename, stop_words=None):
 
 
 def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
-    """
-    Analyzes all documents in a folder and generates output.
+    """Analyzes all documents in a folder and generates output.
 
-    Parameters:
+    Parameters
+    ----------
     - folder_path (str): The path to the folder containing documents.
     - stop_words (list): List of stop words to be excluded from analysis.
     - nazov_zakonu (str): Name of the law, used in plot titles.
@@ -136,6 +137,7 @@ def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
 
     Metrics are saved in CSV files, and bar charts and word clouds are generated
     for visual analysis.
+
     """
     output = analyze_documents_in_folder(folder_path, s_file_analysis, stop_words)
     os.chdir(folder_path)

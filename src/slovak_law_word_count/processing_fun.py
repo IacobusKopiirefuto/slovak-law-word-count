@@ -1,5 +1,4 @@
-"""
-Processing Functions Module
+"""Processing Functions Module.
 
 This module provides general-purpose functions for
 processing HTML files and extracting relevant information.
@@ -34,14 +33,14 @@ from bs4 import BeautifulSoup
 
 
 def load_html_file(filename):
-    """
-    Loads an HTML file, extracts text from a specific div element, and returns it.
+    """Loads an HTML file, extracts text from a specific div element, and returns it.
 
     Args:
         filename (str): The path to the HTML file.
 
     Returns:
         str or None: The extracted text if found, else None.
+
     """
     print(f"processed file: {filename}")
     with open(filename, encoding="utf-8") as html_file:
@@ -63,8 +62,7 @@ def load_html_file(filename):
 
 
 def simple_count(text, stop_words=None):
-    """
-    Computes basic text metrics including word count, character count,
+    """Computes basic text metrics including word count, character count,
     word count without stop words, and type-token ratio.
 
     Type toke ratio is dividing the number of unique words by
@@ -77,6 +75,7 @@ def simple_count(text, stop_words=None):
     Returns:
         dict: A dictionary containing word count, character count,
               word count without stop words, and type-token ratio.
+
     """
     if not isinstance(text, str):
         print("Error: 'text' is not a string. Ending the script.")
@@ -107,8 +106,7 @@ def simple_count(text, stop_words=None):
 
 
 def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
-    """
-    Analyzes documents in a folder using a specified processing function.
+    """Analyzes documents in a folder using a specified processing function.
 
     Documents names are sorted in this order:
 
@@ -125,6 +123,7 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
 
     Returns:
         dict: A dictionary containing analyzed documents with document names as keys.
+
     """
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
     # stop_words default value is None and changes to [] only inside the function

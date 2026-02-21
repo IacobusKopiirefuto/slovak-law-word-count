@@ -1,6 +1,4 @@
-"""
-Example of using s_analysis for analyzing documents
-"""
+"""Example of using s_analysis for analyzing documents."""
 
 import sys
 from pathlib import Path

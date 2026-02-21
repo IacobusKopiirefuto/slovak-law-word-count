@@ -1,5 +1,4 @@
-"""
-Functions using the Stanza NLP package for text analysis.
+"""Functions using the Stanza NLP package for text analysis.
 
 This module provides functions that leverage the Stanza NLP library
 to perform various text analysis tasks, including
@@ -43,14 +42,14 @@ from urllib3.exceptions import NameResolutionError
 
 
 def s_load(text):
-    """
-    Load text into Stanza for further processing.
+    """Load text into Stanza for further processing.
 
     Args:
         text (str): The input text to be processed.
 
     Returns:
         stanza.models.common.doc.Document: Stanza document representation.
+
     """
     # Initialize the Stanza pipeline
     nlp = stanza.Pipeline(
@@ -78,8 +77,7 @@ def s_load(text):
 
 
 def s_sentences(nlp_text):
-    """
-    Calculate the number of sentences and their average length.
+    """Calculate the number of sentences and their average length.
 
     Args:
         nlp_text (stanza.models.common.doc.Document): Stanza document representation.
@@ -87,6 +85,7 @@ def s_sentences(nlp_text):
     Returns:
         dict: A dictionary containing the count of sentences and the average sentence length,
         and the 5 longest sentences.
+
     """
     # Get the number of sentences and average sentence length
     sent_count = len(nlp_text.sentences)
@@ -120,15 +119,14 @@ def s_sentences(nlp_text):
 
 
 def s_tags(nlp_text, word_count, stop_words=None):
-    """
-        Count the frequency of each part-of-speech tag.
+    """Count the frequency of each part-of-speech tag.
 
-        Args:
+    Args:
             nlp_text (stanza.models.common.doc.Document): Stanza document representation.
             word_count (int): The total number of words in the input text.
             stop_words (list, optional): List of stop words to be excluded.
 
-        Returns:
+    Returns:
             dict: A dictionary containing the frequency of each part-of-speech tag.
 
         ````
@@ -155,8 +153,8 @@ def s_tags(nlp_text, word_count, stop_words=None):
 
         For further explanation of the tags see
     <https://universaldependencies.org/u/pos/>
-    """
 
+    """
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
     # stop_words default value is None and changes to [] only inside the function
     if stop_words is None:
@@ -182,8 +180,7 @@ def s_tags(nlp_text, word_count, stop_words=None):
 
 
 def s_readability(nlp_text, word_count, sent_count):
-    """
-    Estimate the reading level required to understand the text by
+    """Estimate the reading level required to understand the text by
     calculating FKGL (Flesch-Kincaid Grade level) and GFI (Gunning Fog Index).
 
     Complex words are here defined as words with three or more syllables.
@@ -197,8 +194,8 @@ def s_readability(nlp_text, word_count, sent_count):
 
     Returns:
         dict: A dictionary containing the FKGL and GFI readability metrics.
-    """
 
+    """
     # Load the Pyphen hyphenation dictionary for Slovak
     dic = pyphen.Pyphen(lang="sk")
 
@@ -231,15 +228,15 @@ def s_readability(nlp_text, word_count, sent_count):
 
 
 def s_lemma(nlp_text, stop_words=None):
-    """
-    Lemmatize the words using Stanza.
+    """Lemmatize the words using Stanza.
 
-     Args:
+    Args:
          nlp_text (stanza.models.common.doc.Document): Stanza document representation.
          stop_words (list, optional): List of stop words to be excluded.
 
-     Returns:
+    Returns:
          Counter: A Counter object containing the frequency of each lemma.
+
     """
     lemmas = []
 

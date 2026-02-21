@@ -1,5 +1,4 @@
-"""
-Quick Analysis Module
+"""Quick Analysis Module.
 
 This module provides functionality for rapid analysis of HTML documents without heavy dependencies.
 
@@ -33,8 +32,7 @@ from .processing_fun import analyze_documents_in_folder, load_html_file, simple_
 
 
 def q_file_analysis(filename, stop_words=None):
-    """
-    Analyzes an HTML file and returns basic text metrics.
+    """Analyzes an HTML file and returns basic text metrics.
 
     Args:
         filename (str): The path to the HTML file.
@@ -43,6 +41,7 @@ def q_file_analysis(filename, stop_words=None):
     Returns:
         dict: A dictionary containing word count, character count,
         word count without stop words, and type-token ratio.
+
     """
     text = load_html_file(filename)
 
@@ -66,8 +65,7 @@ def q_file_analysis(filename, stop_words=None):
 
 
 def q_analysis(folder_path, stop_words=None, nazov_zakona=""):
-    """
-    Runs analysis on all HTML files in a folder using q_file_analysis.
+    """Runs analysis on all HTML files in a folder using q_file_analysis.
 
     Args:
         folder_path (str): The path to the folder containing HTML files.
@@ -76,6 +74,7 @@ def q_analysis(folder_path, stop_words=None, nazov_zakona=""):
 
     Returns:
         dict: A dictionary containing analyzed documents with document names as keys.
+
     """
     output = analyze_documents_in_folder(folder_path, q_file_analysis, stop_words)
     os.chdir(folder_path)

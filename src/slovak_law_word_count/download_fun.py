@@ -1,5 +1,4 @@
-"""
-Module for downloading documents from slov-lex.sk.
+"""Module for downloading documents from slov-lex.sk.
 
 This module provides functions to download various versions of documents in HTML
 format from the slov-lex.sk website.
@@ -71,12 +70,12 @@ def _get_headers(accept: str) -> dict:
 
 
 def download_links_from_table(url, save_path) -> None:
-    """
-    Downloads links from the specified table on slov-lex.sk.
+    """Downloads links from the specified table on slov-lex.sk.
 
     Args:
         url (str): The URL of the document page on slov-lex.sk.
         save_path (str): The local directory where downloaded files will be saved.
+
     """
     url = url.strip()
 
@@ -109,13 +108,13 @@ def download_links_from_table(url, save_path) -> None:
 
 
 def process_table(table, base_url, save_path) -> None:
-    """
-    Processes rows of the table to download files.
+    """Processes rows of the table to download files.
 
     Args:
         table (bs4.element.Tag): The BeautifulSoup Tag representing the table.
         base_url (str): The base URL of the document page.
         save_path (str): The local directory where downloaded files will be saved.
+
     """
     table_rows = table.find_all("tr")
     # Extract links from the second column of the table
@@ -124,13 +123,13 @@ def process_table(table, base_url, save_path) -> None:
 
 
 def process_table_row(row, base_url, save_path) -> None:
-    """
-    Processes a single row of the table to download a file.
+    """Processes a single row of the table to download a file.
 
     Args:
         row (bs4.element.Tag): The BeautifulSoup Tag representing a table row.
         base_url (str): The base URL of the document page.
         save_path (str): The local directory where downloaded files will be saved.
+
     """
     columns = row.find_all("td")
     if len(columns) >= 2:
@@ -143,8 +142,7 @@ def process_table_row(row, base_url, save_path) -> None:
 
 
 def get_download_url(href, base_url):
-    """
-    Gets the download URL based on the href.
+    """Gets the download URL based on the href.
 
     Args:
         href (str): The href attribute of the link.
@@ -152,6 +150,7 @@ def get_download_url(href, base_url):
 
     Returns:
         str: The complete download URL.
+
     """
     if href:
         try:
@@ -166,12 +165,12 @@ def get_download_url(href, base_url):
 
 
 def download_file(download_url, save_path) -> None:
-    """
-    Downloads the file from the given URL.
+    """Downloads the file from the given URL.
 
     Args:
         download_url (str): The URL of the file to be downloaded.
         save_path (str): The local directory where downloaded files will be saved.
+
     """
     try:
         response = session.get(

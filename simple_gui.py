@@ -1,5 +1,4 @@
-"""
-Module: `simple_gui.py`
+"""Module: `simple_gui.py`.
 
 Contains a simple GUI app for easier use of the project scripts.
 
@@ -18,6 +17,7 @@ Note:
 - The GUI uses PySimpleGUI for simplicity.
 - Ensure all required dependencies are installed before running the script.
 - If on computer with not enough RAM, use the `Word and char count only` analysis.
+
 """
 
 import sys
@@ -43,14 +43,16 @@ from slovak_law_word_count.stop_words_default import default_stop_words
 
 
 def analyze_folder(selected_folder_path) -> None:
-    """
-    Check if a valid folder path is provided and print the status.
+    """Check if a valid folder path is provided and print the status.
 
-    Parameters:
+    Parameters
+    ----------
     - selected_folder_path (str): The path to the selected folder.
 
-    Returns:
+    Returns
+    -------
     None
+
     """
     if os.path.isdir(selected_folder_path):
         # Perform document analysis here

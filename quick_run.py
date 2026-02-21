@@ -1,6 +1,4 @@
-"""
-Example of using q_analysis for analyzing documents
-"""
+"""Example of using q_analysis for analyzing documents."""
 
 import sys
 from pathlib import Path

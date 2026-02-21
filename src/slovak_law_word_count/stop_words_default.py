@@ -1,5 +1,4 @@
-"""
-Module: `stop_words_default.py`
+"""Module: `stop_words_default.py`.
 
 Contains a list variable `default_stop_words` providing default stop words for the project.
 
@@ -13,6 +12,7 @@ from stop_words_default import default_stop_words
 
 # ... rest of the code ...
 ```
+
 """
 
 # SPDX-License-Identifier: CC0-1.0
