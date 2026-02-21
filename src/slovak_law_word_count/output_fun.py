@@ -34,7 +34,6 @@ For more detailed information, refer to the individual function docstrings.
 import csv
 
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud
 
 
 def csv_count_output(output, fields, csv_name="count_output") -> None:
@@ -243,6 +242,12 @@ def word_cloud(
     # Check if lemma_counts is empty and return early if true
     if not lemma_counts:
         print("Lemma counts is empty. Skipping word cloud generation.")
+        return
+
+    try:
+        from wordcloud import WordCloud
+    except ImportError:
+        print("Skipping word cloud generation: install extra 'stanza' for wordcloud support.")
         return
 
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)

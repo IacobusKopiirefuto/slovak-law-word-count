@@ -16,15 +16,15 @@ Functions:
 
 import os
 
-from output_fun import (
+from .output_fun import (
     csv_count_output,
     csv_lemma_out,
     csv_tag_out,
     plot_data,
     word_cloud,
 )
-from processing_fun import analyze_documents_in_folder, load_html_file, simple_count
-from stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
+from .processing_fun import analyze_documents_in_folder, load_html_file, simple_count
+from .stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
 
 
 def s_file_analysis(filename, stop_words=None):

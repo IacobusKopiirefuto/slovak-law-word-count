@@ -28,8 +28,8 @@ For more detailed information, refer to the individual function docstrings.
 
 import os
 
-from output_fun import csv_count_output, plot_data
-from processing_fun import analyze_documents_in_folder, load_html_file, simple_count
+from .output_fun import csv_count_output, plot_data
+from .processing_fun import analyze_documents_in_folder, load_html_file, simple_count
 
 
 def q_file_analysis(filename, stop_words=None):

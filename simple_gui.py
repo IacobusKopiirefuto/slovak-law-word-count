@@ -20,6 +20,15 @@ Note:
 - If on computer with not enough RAM, use the `Word and char count only` analysis.
 """
 
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
@@ -27,10 +36,10 @@ import os
 
 import PySimpleGUI as sg
 
-from download_fun import download_links_from_table
-from quick_analysis import q_analysis
-from stanza_analysis import s_analysis
-from stop_words_default import default_stop_words
+from slovak_law_word_count.download_fun import download_links_from_table
+from slovak_law_word_count.quick_analysis import q_analysis
+from slovak_law_word_count.stanza_analysis import s_analysis
+from slovak_law_word_count.stop_words_default import default_stop_words
 
 
 def analyze_folder(selected_folder_path) -> None:

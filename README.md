@@ -21,6 +21,58 @@ So far it offers these metrics and outputs:
 - s_readability_word_count
 - tag_word_count
 
+# Build and install package
+
+Prerequisites:
+
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/)
+
+Build distribution artifacts (`wheel` + `sdist`):
+
+```bash
+uv build
+```
+
+This creates files in `dist/`, e.g.:
+
+- `dist/slovak_law_word_count-0.1.0-py3-none-any.whl`
+- `dist/slovak_law_word_count-0.1.0.tar.gz`
+
+Install options:
+
+- editable install for development:
+
+```bash
+uv pip install -e .
+```
+
+- editable install with optional features:
+
+```bash
+uv pip install -e ".[stanza]"
+uv pip install -e ".[stanza,gpu]"
+uv pip install -e ".[gui]"
+```
+
+- install from a built wheel:
+
+```bash
+uv pip install dist/slovak_law_word_count-0.1.0-py3-none-any.whl
+```
+
+- install from source distribution:
+
+```bash
+uv pip install dist/slovak_law_word_count-0.1.0.tar.gz
+```
+
+After install, the CLI entry point is available as:
+
+```bash
+slovak-law-word-count --help
+```
+
 
 # Running project
 
@@ -31,23 +83,25 @@ Example for analysing the Constitution of Slovak Republic:
 - quick analysis:
 
 ```python
-# from download_fun import download_links_from_table
-from quick_analysis import q_analysis
-from stop_words_default import default_stop_words
+from slovak_law_word_count.quick_analysis import q_analysis
+from slovak_law_word_count.stop_words_default import default_stop_words
 
-# download_links_from_table('https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701', '../Constitution')
 q_analysis("./Constitution", default_stop_words, 'o Ústave SR')
 ```
 
 - stanza analysis:
 
 ```python
-# from download_fun import download_links_from_table
-from stanza_analysis import s_analysis
-from stop_words_default import default_stop_words
+from slovak_law_word_count.stanza_analysis import s_analysis
+from slovak_law_word_count.stop_words_default import default_stop_words
 
-# download_links_from_table('https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701', './Constitution')
 s_analysis("./Constitution", default_stop_words, 'o Ústave SR')
+```
+
+Package CLI:
+
+```bash
+slovak-law-word-count ./downloads --download-url "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701" --mode quick --law-name "o Ústave SR"
 ```
 
 # To Do

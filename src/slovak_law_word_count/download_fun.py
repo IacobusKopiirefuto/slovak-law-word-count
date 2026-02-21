@@ -48,9 +48,26 @@ session.mount(
 session.verify = True  # Set False for debugging
 session.headers.update(
     {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Origin": "https://www.slov-lex.sk",
+        "Referer": "https://www.slov-lex.sk/",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
     },
 )
+
+
+def _get_headers(accept: str) -> dict:
+    """Headers matching a regular browser request to slov-lex.sk static API."""
+    return {
+        "Accept": accept,
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-GPC": "1",
+        "Connection": "keep-alive",
+    }
 
 
 def download_links_from_table(url, save_path) -> None:
@@ -64,14 +81,22 @@ def download_links_from_table(url, save_path) -> None:
     url = url.strip()
 
     try:
-        response = requests.get(url, timeout=10)
-        #        response = requests.get(url, headers=headers, timeout=10, verify=False)
+        response = session.get(
+            url,
+            headers=_get_headers("application/json, text/plain, */*"),
+            timeout=10,
+        )
         response.raise_for_status()
     except requests.exceptions.SSLError as ssl_error:
         print(f"SSL Error: {ssl_error}")
         return
     except requests.exceptions.RequestException as error_name:
         print(f"Error occurred while fetching the page: {error_name!s}")
+        return
+
+    content_type = response.headers.get("Content-Type", "").lower()
+    if "html" not in content_type:
+        save_response_content(url, response, save_path)
         return
 
     soup = BeautifulSoup(response.content, "html.parser")
@@ -149,8 +174,11 @@ def download_file(download_url, save_path) -> None:
         save_path (str): The local directory where downloaded files will be saved.
     """
     try:
-        response = requests.get(download_url, timeout=10)
-        #        response = requests.get(download_url, headers=headers, timeout=10, verify=False)
+        response = session.get(
+            download_url,
+            headers=_get_headers("application/json, text/plain, */*"),
+            timeout=10,
+        )
         response.raise_for_status()
     except requests.exceptions.SSLError as ssl_error:
         print(f"SSL Error: {ssl_error}")
@@ -161,7 +189,19 @@ def download_file(download_url, save_path) -> None:
 
     filename = urlparse(download_url).path.split("/")[-1]
     file_path = os.path.join(save_path, filename)
+    os.makedirs(save_path, exist_ok=True)
     print(file_path)
     with open(file_path, "wb") as file:
         file.write(response.content)
     print(f"Downloaded: {download_url}")
+
+
+def save_response_content(url, response, save_path) -> None:
+    """Persist already-downloaded response bytes to disk."""
+    filename = urlparse(url).path.split("/")[-1]
+    file_path = os.path.join(save_path, filename)
+    os.makedirs(save_path, exist_ok=True)
+    with open(file_path, "wb") as file:
+        file.write(response.content)
+    print(file_path)
+    print(f"Downloaded: {url}")
