@@ -106,10 +106,6 @@ slovak-law-word-count ./downloads --download-url "https://www.slov-lex.sk/pravne
 
 # To Do
 
-- fix `download_fun.py`: function seems to work, but slov-lex.sk started to block it
-    - currently gives error: `HTTPSConnectionPool(host='www.slov-lex.sk', port=443): Max retries exceeded with url: /pravne-predpisy/SK/ZZ/1992/460/20230701 (Caused by SSLError(SSLError(1, '[SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1006)')))`
-    - but `curl https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701` as well as `download_links_from_table('https://example.org/', '../Constitution')` works
-    - you can also download all legal texts (11 GB, zip archive) from [slov-lex.sk](https://www.slov-lex.sk/archiv-zbierky-zakonov)
 - add additional metrics:
     - longest (shortest) sentences from `s_sentences()`
     - longest (shortest) words from `s_readability()`
