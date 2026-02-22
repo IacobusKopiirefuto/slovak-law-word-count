@@ -87,3 +87,25 @@ Issues = "https://github.com/IacobusKopiirefuto/slovak-law-word-count/issues"
 
 [project.scripts]
 slovak-law-word-count = "slovak_law_word_count.cli:main"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "D203", # incompatible with D211; we prefer no blank line before class docstrings
+  "D213", # incompatible with D212; we prefer summary text on the first docstring line
+  "E501", # line length is formatter-managed; keep rare long lines when wrapping hurts readability
+  "ERA001", # temporary: keep commented-out code visible until it is reviewed and removed
+  ]
+
+unfixable = [
+  "T201" # report `print`, but do not auto-delete it to avoid accidental behavior changes
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true

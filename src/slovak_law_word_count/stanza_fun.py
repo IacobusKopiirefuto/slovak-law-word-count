@@ -68,8 +68,8 @@ def s_load(text: str) -> Document:
     except ConnectionError:
         logger.exception("Connection error while downloading resources")
         sys.exit(1)
-    except NameResolutionError as er:
-        logger.exception("Failed to resolve host while downloading resources: %s", er)
+    except NameResolutionError:
+        logger.exception("Failed to resolve host while downloading resources")
         sys.exit(1)
     except stanza.exceptions.DoesNotExistError:
         logger.exception("Error downloading resources")
