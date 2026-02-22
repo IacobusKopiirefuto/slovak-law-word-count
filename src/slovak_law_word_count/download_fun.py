@@ -30,11 +30,13 @@ Usage:
 
 import logging
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, urlunparse
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+
+from .normalize import SlovLexStaticUrlBuilder
 
 # Set the maximum supported TLS version to TLS 1.2 # slov-lex.sk does not support TLS 1.3
 # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -60,8 +62,15 @@ session.headers.update(
 
 MIN_ROW_COLUMNS_FOR_LINK = 2
 LINK_COLUMN_INDEX = 1
+MIN_STANDARD_PATH_PARTS = 4
+STANDARD_PATH_WITH_DATE_PARTS = 5
+STANDARD_DATE_INDEX = 4
+DATE_LENGTH = 8
+STANDARD_URL_PREFIX = "/ezbierky/pravne-predpisy/"
+STATIC_URL_PREFIX = "/static/"
 PathLike = str | Path
 logger = logging.getLogger(__name__)
+static_url_builder = SlovLexStaticUrlBuilder()
 
 
 def _get_headers(accept: str) -> dict:
@@ -76,6 +85,108 @@ def _get_headers(accept: str) -> dict:
     }
 
 
+def _remove_query_and_fragment(url: str) -> str:
+    """Return URL without query string and fragment."""
+    parsed = urlparse(url)
+    return urlunparse(
+        (
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            "",
+            "",
+            "",
+        ),
+    )
+
+
+def _normalize_static_url(url: str) -> str:
+    """Normalize static.slov-lex URL and remove the optional version query."""
+    parsed = urlparse(url)
+    path = parsed.path.rstrip("/")
+    tail = path[len(STATIC_URL_PREFIX) :].strip("/")
+    path_parts = tail.split("/")
+    if len(path_parts) >= STANDARD_PATH_WITH_DATE_PARTS:
+        date_part = path_parts[STANDARD_DATE_INDEX]
+        date_part = date_part.removesuffix(static_url_builder.end)
+        try:
+            return static_url_builder.build(
+                country=path_parts[0],
+                collection=path_parts[1],
+                year=path_parts[2],
+                law_number=path_parts[3],
+                date=date_part,
+            )
+        except ValueError:
+            logger.warning("Invalid static URL components: %s", url)
+    return urlunparse(("https", "static.slov-lex.sk", path, "", "", ""))
+
+
+def _resolve_standard_url_to_static(url: str) -> str | None:
+    """Follow redirects to obtain static URL for standard links without date."""
+    try:
+        response = session.get(url, allow_redirects=True, timeout=10)
+        response.raise_for_status()
+    except requests.exceptions.RequestException:
+        logger.exception("Failed to resolve standard URL to static URL")
+        return None
+
+    resolved_url = _remove_query_and_fragment(response.url)
+    parsed_resolved = urlparse(resolved_url)
+    if (
+        parsed_resolved.netloc == "static.slov-lex.sk"
+        and parsed_resolved.path.startswith(STATIC_URL_PREFIX)
+    ):
+        return _normalize_static_url(resolved_url)
+    return None
+
+
+# TODO: simplify ulr normalization process,
+#   this works but the code is not as readable as it could
+def normalize_slov_lex_url(url: str) -> str:
+    """Normalize slov-lex document URLs to static portal format when possible."""
+    normalized_input = url.strip()
+    parsed = urlparse(normalized_input)
+    host = parsed.netloc.lower()
+    path = parsed.path.rstrip("/")
+
+    if host == "static.slov-lex.sk" and path.startswith(STATIC_URL_PREFIX):
+        return _normalize_static_url(normalized_input)
+
+    if host != "www.slov-lex.sk" or not path.startswith(STANDARD_URL_PREFIX):
+        return _remove_query_and_fragment(normalized_input)
+
+    tail = path[len(STANDARD_URL_PREFIX) :].strip("/")
+    path_parts = tail.split("/")
+    if len(path_parts) < MIN_STANDARD_PATH_PARTS:
+        return _remove_query_and_fragment(normalized_input)
+
+    # Standard URLs with explicit date can be rewritten locally.
+    if (
+        len(path_parts) >= STANDARD_PATH_WITH_DATE_PARTS
+        and path_parts[STANDARD_DATE_INDEX].isdigit()
+        and len(path_parts[STANDARD_DATE_INDEX]) == DATE_LENGTH
+    ):
+        try:
+            return static_url_builder.build(
+                country=path_parts[0],
+                collection=path_parts[1],
+                year=path_parts[2],
+                law_number=path_parts[3],
+                date=path_parts[STANDARD_DATE_INDEX],
+            )
+        except ValueError:
+            logger.warning("Invalid standard URL components: %s", normalized_input)
+            return _remove_query_and_fragment(normalized_input)
+
+    # For legacy URLs without date, resolve the redirect once.
+    resolved = _resolve_standard_url_to_static(normalized_input)
+    if resolved:
+        return resolved
+
+    return _remove_query_and_fragment(normalized_input)
+
+
 def download_links_from_table(url: str, save_path: PathLike) -> None:
     """Download links from the specified table on slov-lex.sk.
 
@@ -84,7 +195,7 @@ def download_links_from_table(url: str, save_path: PathLike) -> None:
         save_path (str): The local directory where downloaded files will be saved.
 
     """
-    url = url.strip()
+    url = normalize_slov_lex_url(url)
 
     try:
         response = session.get(

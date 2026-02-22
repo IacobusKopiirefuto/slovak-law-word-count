@@ -132,8 +132,9 @@ def s_analysis(
 
     Example:
     ```python
-    output = s_analysis("/path/to/documents_folder",
-    stop_words=["and", "the"], nazov_zakonu="Zakon123")
+    output = s_analysis(
+        "/path/to/documents_folder", stop_words=["and", "the"], nazov_zakonu="Zakon123"
+    )
     ```
 
     Metrics are saved in CSV files, and bar charts and word clouds are generated
