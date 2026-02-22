@@ -1,5 +1,4 @@
-"""
-Quick Analysis Module
+"""Quick Analysis Module.
 
 This module provides functionality for rapid analysis of HTML documents without heavy dependencies.
 
@@ -26,15 +25,24 @@ For more detailed information, refer to the individual function docstrings.
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
+import logging
 import os
+from pathlib import Path
+from typing import Any
 
-from output_fun import csv_count_output, plot_data
-from processing_fun import analyze_documents_in_folder, load_html_file, simple_count
+from .output_fun import csv_count_output, plot_data
+from .processing_fun import analyze_documents_in_folder, load_html_file, simple_count
+
+PathLike = str | Path
+AnalysisResult = dict[str, Any]
+logger = logging.getLogger(__name__)
 
 
-def q_file_analysis(filename, stop_words=None):
-    """
-    Analyzes an HTML file and returns basic text metrics.
+def q_file_analysis(
+    filename: PathLike,
+    stop_words: list[str] | None = None,
+) -> AnalysisResult:
+    """Analyzes an HTML file and returns basic text metrics.
 
     Args:
         filename (str): The path to the HTML file.
@@ -43,11 +51,12 @@ def q_file_analysis(filename, stop_words=None):
     Returns:
         dict: A dictionary containing word count, character count,
         word count without stop words, and type-token ratio.
+
     """
     text = load_html_file(filename)
 
     if text is None:
-        print("Could not find div element.")
+        logger.warning("Could not find div element.")
         # Return a default dictionary with all values set to 0 or an empty list
         return {
             "word_count": 0,  # word_count including stop words
@@ -65,9 +74,12 @@ def q_file_analysis(filename, stop_words=None):
     }
 
 
-def q_analysis(folder_path, stop_words=None, nazov_zakona=""):
-    """
-    Runs analysis on all HTML files in a folder using q_file_analysis.
+def q_analysis(
+    folder_path: PathLike,
+    stop_words: list[str] | None = None,
+    nazov_zakona: str = "",
+) -> dict[str, AnalysisResult]:
+    """Run analysis on all HTML files in a folder using `q_file_analysis`.
 
     Args:
         folder_path (str): The path to the folder containing HTML files.
@@ -76,11 +88,12 @@ def q_analysis(folder_path, stop_words=None, nazov_zakona=""):
 
     Returns:
         dict: A dictionary containing analyzed documents with document names as keys.
+
     """
     output = analyze_documents_in_folder(folder_path, q_file_analysis, stop_words)
     os.chdir(folder_path)
 
-    print(output)
+    logger.info("%s", output)
 
     fields = ["word_count", "char_count", "word_count_stop", "type_token_ratio"]
 

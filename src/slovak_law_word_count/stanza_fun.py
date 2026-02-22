@@ -1,5 +1,4 @@
-"""
-Functions using the Stanza NLP package for text analysis.
+"""Functions using the Stanza NLP package for text analysis.
 
 This module provides functions that leverage the Stanza NLP library
 to perform various text analysis tasks, including
@@ -33,24 +32,30 @@ and official Stanza documentation <https://stanfordnlp.github.io/stanza/index.ht
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
+import logging
 import sys
 from collections import Counter
 
 import pyphen
 import stanza
+from stanza.models.common.doc import Document
 from stanza.pipeline.core import DownloadMethod
 from urllib3.exceptions import NameResolutionError
 
+MIN_COMPLEX_WORD_SYLLABLES = 3
+MIN_LEMMA_FREQUENCY = 5
+logger = logging.getLogger(__name__)
 
-def s_load(text):
-    """
-    Load text into Stanza for further processing.
+
+def s_load(text: str) -> Document:
+    """Load text into Stanza for further processing.
 
     Args:
         text (str): The input text to be processed.
 
     Returns:
         stanza.models.common.doc.Document: Stanza document representation.
+
     """
     # Initialize the Stanza pipeline
     nlp = stanza.Pipeline(
@@ -60,26 +65,25 @@ def s_load(text):
 
     try:
         stanza.download("sk")
-    except ConnectionError as conn_error:
-        print(f"Connection error while downloading resources: {conn_error}")
+    except ConnectionError:
+        logger.exception("Connection error while downloading resources")
         sys.exit(1)
-    except NameResolutionError as dns_error:
-        print(f"Failed to resolve host while downloading resources: {dns_error}")
+    except NameResolutionError:
+        logger.exception("Failed to resolve host while downloading resources")
         sys.exit(1)
-    except stanza.exceptions.DoesNotExistError as exception:
-        print(f"Error downloading resources: {exception}")
+    except stanza.exceptions.DoesNotExistError:
+        logger.exception("Error downloading resources")
         sys.exit(1)
-    except stanza.exceptions.StanzaResourceException as exception:
-        print(f"Error downloading resources: {exception}")
+    except stanza.exceptions.StanzaResourceException:
+        logger.exception("Error downloading resources")
         sys.exit(1)
 
     # Use Stanza to process the text
     return nlp(text)
 
 
-def s_sentences(nlp_text):
-    """
-    Calculate the number of sentences and their average length.
+def s_sentences(nlp_text: Document) -> dict[str, int | float | list[str]]:
+    """Calculate the number of sentences and their average length.
 
     Args:
         nlp_text (stanza.models.common.doc.Document): Stanza document representation.
@@ -87,6 +91,7 @@ def s_sentences(nlp_text):
     Returns:
         dict: A dictionary containing the count of sentences and the average sentence length,
         and the 5 longest sentences.
+
     """
     # Get the number of sentences and average sentence length
     sent_count = len(nlp_text.sentences)
@@ -119,16 +124,19 @@ def s_sentences(nlp_text):
     }
 
 
-def s_tags(nlp_text, word_count, stop_words=None):
-    """
-        Count the frequency of each part-of-speech tag.
+def s_tags(
+    nlp_text: Document,
+    word_count: int,
+    stop_words: list[str] | None = None,
+) -> tuple[dict[str, float], int]:
+    """Count the frequency of each part-of-speech tag.
 
-        Args:
+    Args:
             nlp_text (stanza.models.common.doc.Document): Stanza document representation.
             word_count (int): The total number of words in the input text.
             stop_words (list, optional): List of stop words to be excluded.
 
-        Returns:
+    Returns:
             dict: A dictionary containing the frequency of each part-of-speech tag.
 
         ````
@@ -155,8 +163,8 @@ def s_tags(nlp_text, word_count, stop_words=None):
 
         For further explanation of the tags see
     <https://universaldependencies.org/u/pos/>
-    """
 
+    """
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
     # stop_words default value is None and changes to [] only inside the function
     if stop_words is None:
@@ -181,10 +189,15 @@ def s_tags(nlp_text, word_count, stop_words=None):
     return tag_frequencies, s_tag_word_count
 
 
-def s_readability(nlp_text, word_count, sent_count):
-    """
-    Estimate the reading level required to understand the text by
-    calculating FKGL (Flesch-Kincaid Grade level) and GFI (Gunning Fog Index).
+def s_readability(
+    nlp_text: Document,
+    word_count: int,
+    sent_count: int,
+) -> dict[str, float]:
+    """Estimate text readability with FKGL and GFI.
+
+    Estimate the reading level required to understand the text by calculating
+    FKGL (Flesch-Kincaid Grade level) and GFI (Gunning Fog Index).
 
     Complex words are here defined as words with three or more syllables.
 
@@ -197,8 +210,8 @@ def s_readability(nlp_text, word_count, sent_count):
 
     Returns:
         dict: A dictionary containing the FKGL and GFI readability metrics.
-    """
 
+    """
     # Load the Pyphen hyphenation dictionary for Slovak
     dic = pyphen.Pyphen(lang="sk")
 
@@ -214,7 +227,7 @@ def s_readability(nlp_text, word_count, sent_count):
             all_word_count += 1
             syllable_count += len(dic.inserted(token.text).split("-"))
             # Check if word is complex
-            if len(dic.inserted(token.text).split("-")) >= 3:
+            if len(dic.inserted(token.text).split("-")) >= MIN_COMPLEX_WORD_SYLLABLES:
                 complex_word_count += 1
 
     fkgl = (
@@ -230,16 +243,16 @@ def s_readability(nlp_text, word_count, sent_count):
     }
 
 
-def s_lemma(nlp_text, stop_words=None):
-    """
-    Lemmatize the words using Stanza.
+def s_lemma(nlp_text: Document, stop_words: list[str] | None = None) -> Counter[str]:
+    """Lemmatize the words using Stanza.
 
-     Args:
+    Args:
          nlp_text (stanza.models.common.doc.Document): Stanza document representation.
          stop_words (list, optional): List of stop words to be excluded.
 
-     Returns:
+    Returns:
          Counter: A Counter object containing the frequency of each lemma.
+
     """
     lemmas = []
 
@@ -255,4 +268,6 @@ def s_lemma(nlp_text, stop_words=None):
             if lemma.isalpha() and lemma not in stop_words:
                 lemmas.append(lemma)
 
-    return Counter(lemma for lemma in lemmas if lemmas.count(lemma) >= 5)
+    return Counter(
+        lemma for lemma in lemmas if lemmas.count(lemma) >= MIN_LEMMA_FREQUENCY
+    )

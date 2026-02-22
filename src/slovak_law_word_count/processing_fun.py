@@ -1,5 +1,4 @@
-"""
-Processing Functions Module
+"""Processing Functions Module.
 
 This module provides general-purpose functions for
 processing HTML files and extracting relevant information.
@@ -27,24 +26,33 @@ For more detailed information, refer to the individual function docstrings.
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
-import os
+import logging
 import sys
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any
 
 from bs4 import BeautifulSoup
 
+FILE_EXTENSION_LENGTH = 5
+EXPECTED_DATE_FILENAME_LENGTH = 8
+PRIMARY_DOCUMENT_FILENAME = "vyhlasene_znenie.html"
+PathLike = str | Path
+logger = logging.getLogger(__name__)
 
-def load_html_file(filename):
-    """
-    Loads an HTML file, extracts text from a specific div element, and returns it.
+
+def load_html_file(filename: PathLike) -> str | None:
+    """Load an HTML file and return text from the target div element.
 
     Args:
         filename (str): The path to the HTML file.
 
     Returns:
         str or None: The extracted text if found, else None.
+
     """
-    print(f"processed file: {filename}")
-    with open(filename, encoding="utf-8") as html_file:
+    logger.info("processed file: %s", filename)
+    with Path(filename).open(encoding="utf-8") as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
     # Find the desired div element by its class and ID
@@ -56,19 +64,17 @@ def load_html_file(filename):
     text = div.get_text()
 
     if not isinstance(text, str):
-        print("Error: 'text' is not a string. Ending the script.")
+        logger.error("Error: 'text' is not a string. Ending the script.")
         sys.exit(1)
 
     return text
 
 
-def simple_count(text, stop_words=None):
-    """
-    Computes basic text metrics including word count, character count,
-    word count without stop words, and type-token ratio.
+def simple_count(text: str, stop_words: list[str] | None = None) -> dict[str, float]:
+    """Compute basic text metrics.
 
-    Type toke ratio is dividing the number of unique words by
-    the total number of words in the text.
+    Compute word count, character count, stop-word-filtered word count, and
+    type-token ratio for the given text.
 
     Args:
         text (str): The input text.
@@ -77,9 +83,10 @@ def simple_count(text, stop_words=None):
     Returns:
         dict: A dictionary containing word count, character count,
               word count without stop words, and type-token ratio.
+
     """
     if not isinstance(text, str):
-        print("Error: 'text' is not a string. Ending the script.")
+        logger.error("Error: 'text' is not a string. Ending the script.")
         sys.exit(1)
 
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
@@ -106,9 +113,12 @@ def simple_count(text, stop_words=None):
     }
 
 
-def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
-    """
-    Analyzes documents in a folder using a specified processing function.
+def analyze_documents_in_folder(
+    folder_path: PathLike,
+    process_func: Callable[[Path, list[str]], dict[str, Any]],
+    stop_words: list[str] | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Analyzes documents in a folder using a specified processing function.
 
     Documents names are sorted in this order:
 
@@ -125,6 +135,7 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
 
     Returns:
         dict: A dictionary containing analyzed documents with document names as keys.
+
     """
     # To avoid W0102: Dangerous default value [] as argument (dangerous-default-value)
     # stop_words default value is None and changes to [] only inside the function
@@ -133,31 +144,36 @@ def analyze_documents_in_folder(folder_path, process_func, stop_words=None):
 
     analyzed_documents = {}
 
-    def custom_key(value):
-        if value == "vyhlasene_znenie.html":
+    def custom_key(value: str) -> int | float:
+        if value == PRIMARY_DOCUMENT_FILENAME:
             return 0
-        if value != "vyhlasene_znenie.html":
-            try:
-                return int(value.split(".")[0])
-            except ValueError:
-                return float("inf")
-        return None
+        try:
+            return int(value.split(".")[0])
+        except ValueError:
+            return float("inf")
 
-    for file_name in sorted(os.listdir(folder_path), key=custom_key):
+    folder = Path(folder_path)
+    for file_path in sorted(folder.iterdir(), key=lambda path: custom_key(path.name)):
+        file_name = file_path.name
         # Check if file has an eight-digit number name followed by ".html" extension
         # Kinda duplicity, could be done in custom_kye
         if not (
             file_name.endswith(".html")
             or (
-                file_name != "vyhlasene_znenie.html"
-                and (not file_name[:-5].isdigit() or len(file_name[:-5]) != 8)
+                file_name != PRIMARY_DOCUMENT_FILENAME
+                and (
+                    not file_name[:-FILE_EXTENSION_LENGTH].isdigit()
+                    or len(file_name[:-FILE_EXTENSION_LENGTH])
+                    != EXPECTED_DATE_FILENAME_LENGTH
+                )
             )
         ):
-            print(f"skipping file: {file_name}")
+            logger.info("skipping file: %s", file_name)
             continue
         if file_name.endswith(".html"):
-            document_name = file_name[:-5]  # Remove the .html suffix
-            file_path = os.path.join(folder_path, file_name)
+            document_name = file_name[
+                :-FILE_EXTENSION_LENGTH
+            ]  # Remove the .html suffix
             #            with open(file_path, 'r') as file:
             #                html_content = file.read()
             analyzed_document = process_func(file_path, stop_words)

@@ -1,5 +1,4 @@
-"""
-Module: `simple_gui.py`
+"""Module: `simple_gui.py`.
 
 Contains a simple GUI app for easier use of the project scripts.
 
@@ -18,36 +17,38 @@ Note:
 - The GUI uses PySimpleGUI for simplicity.
 - Ensure all required dependencies are installed before running the script.
 - If on computer with not enough RAM, use the `Word and char count only` analysis.
+
 """
+
+import logging
+from pathlib import Path
+
+import PySimpleGUI
 
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
+from slovak_law_word_count.download_fun import download_links_from_table
+from slovak_law_word_count.logging_config import setup_logging
+from slovak_law_word_count.quick_analysis import q_analysis
+from slovak_law_word_count.stanza_analysis import s_analysis
+from slovak_law_word_count.stop_words_default import default_stop_words
 
-import os
-
-import PySimpleGUI as sg
-
-from download_fun import download_links_from_table
-from quick_analysis import q_analysis
-from stanza_analysis import s_analysis
-from stop_words_default import default_stop_words
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
-def analyze_folder(selected_folder_path) -> None:
+def analyze_folder(selected_folder_path: str) -> None:
+    """Check whether a provided folder path is valid and print the status.
+
+    Args:
+        selected_folder_path: Path to the selected folder.
+
     """
-    Check if a valid folder path is provided and print the status.
-
-    Parameters:
-    - selected_folder_path (str): The path to the selected folder.
-
-    Returns:
-    None
-    """
-    if os.path.isdir(selected_folder_path):
+    if Path(selected_folder_path).is_dir():
         # Perform document analysis here
-        print("Analyzing folder:", selected_folder_path)
+        logger.info("Analyzing folder: %s", selected_folder_path)
     else:
-        print("Invalid folder path:", selected_folder_path)
+        logger.warning("Invalid folder path: %s", selected_folder_path)
 
 
 # layout = [
@@ -57,20 +58,23 @@ def analyze_folder(selected_folder_path) -> None:
 # ]
 
 layout = [
-    [sg.Text("Enter a URL:")],
-    [sg.Input(key="url_input"), sg.Button("Download")],
-    [sg.Text("Select a folder:")],
-    [sg.Input(), sg.FolderBrowse(key="folder_selector")],
-    [sg.Text("Select analysis type:")],
-    [sg.Button("Full analysis"), sg.Button("Word and char count only")],
+    [PySimpleGUI.Text("Enter a URL:")],
+    [PySimpleGUI.Input(key="url_input"), PySimpleGUI.Button("Download")],
+    [PySimpleGUI.Text("Select a folder:")],
+    [PySimpleGUI.Input(), PySimpleGUI.FolderBrowse(key="folder_selector")],
+    [PySimpleGUI.Text("Select analysis type:")],
+    [
+        PySimpleGUI.Button("Full analysis"),
+        PySimpleGUI.Button("Word and char count only"),
+    ],
 ]
 
 
-window = sg.Window("Document Analyzer", layout)
+window = PySimpleGUI.Window("Document Analyzer", layout)
 
 while True:
     event, values = window.read()
-    if event == sg.WINDOW_CLOSED:
+    if event == PySimpleGUI.WINDOW_CLOSED:
         break
     if event == "Word and char count only":
         folder_path = values["folder_selector"]
@@ -81,13 +85,13 @@ while True:
     if event == "Download":
         download_url = values["url_input"]
         folder_path = values["folder_selector"]
-        print(download_url)
-        print(folder_path)
+        logger.info("%s", download_url)
+        logger.info("%s", folder_path)
         #        sg.popup("Downloading data")
         download_links_from_table(download_url, folder_path)
-        sg.popup("Download completed")
+        PySimpleGUI.popup("Download completed")
 #        save_path = os.path.join(os.getcwd(), "downloaded_file")
 #        download_file(download_url, save_path)
-#        print("File downloaded successfully:", save_path)
+#        logger.info("File downloaded successfully: %s", save_path)
 
 window.close()

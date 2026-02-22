@@ -1,13 +1,20 @@
-"""
-Example of using q_analysis for analyzing documents
-"""
+"""Example of using q_analysis for analyzing documents."""
 
-from download_fun import download_links_from_table
-from quick_analysis import q_analysis
-from stop_words_default import default_stop_words
+from slovak_law_word_count.download_fun import download_links_from_table
+from slovak_law_word_count.logging_config import setup_logging
+from slovak_law_word_count.quick_analysis import q_analysis
+from slovak_law_word_count.stop_words_default import default_stop_words
 
-download_links_from_table(
-    "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701",
-    "../Constitution",
-)
-q_analysis("./Constitution", default_stop_words, "o Ústave SR")
+
+def main() -> None:
+    """Download and run the quick analysis example."""
+    setup_logging()
+    download_links_from_table(
+        "https://www.slov-lex.sk/pravne-predpisy/SK/ZZ/1992/460/20230701",
+        "../Constitution",
+    )
+    q_analysis("./Constitution", default_stop_words, "o Ústave SR")
+
+
+if __name__ == "__main__":
+    main()

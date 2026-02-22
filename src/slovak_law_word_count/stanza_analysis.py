@@ -1,5 +1,5 @@
-"""
-Module for analyzing documents using functions from stanza_fun.py.
+"""Module for analyzing documents using functions from stanza_fun.py.
+
 Provides more complex results compared to quick_analysis.py.
 
 Functions:
@@ -14,36 +14,35 @@ Functions:
 # Copyright 2023 Jakub Škoda
 # SPDX-License-Identifier: AGPL-3.0-only
 
+import logging
 import os
+from pathlib import Path
+from typing import Any
 
-from output_fun import (
+from .output_fun import (
     csv_count_output,
     csv_lemma_out,
     csv_tag_out,
     plot_data,
     word_cloud,
 )
-from processing_fun import analyze_documents_in_folder, load_html_file, simple_count
-from stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
+from .processing_fun import analyze_documents_in_folder, load_html_file, simple_count
+from .stanza_fun import s_lemma, s_load, s_readability, s_sentences, s_tags
+
+PathLike = str | Path
+AnalysisResult = dict[str, Any]
+logger = logging.getLogger(__name__)
 
 
-def s_file_analysis(filename, stop_words=None):
-    """
-    Analyzes a single document using various linguistic metrics.
+def s_file_analysis(
+    filename: PathLike,
+    stop_words: list[str] | None = None,
+) -> AnalysisResult:
+    """Analyze a single document and compute linguistic metrics.
 
-    Parameters:
-    - filename (str): The path to the document file.
-    - stop_words (list): List of stop words to be excluded from analysis.
-
-    Returns:
-    dict: Dictionary containing various linguistic metrics.
-
-    Example:
-    ```python
-    from stanza_fun import s_file_analysis
-    from stop_words_default import default_stop_words
-    result = s_file_analysis("/path/to/document.html", default_stop_words)
-    ```
+    Args:
+        filename: Path to the document file.
+        stop_words: Optional stop words excluded from selected metrics.
 
     Metrics:
     - 'word_count': Total word count including stop words.
@@ -56,11 +55,13 @@ def s_file_analysis(filename, stop_words=None):
     - 'GFI': Gunning Fog Index.
     - 'tag_frequencies': Frequencies of different word categories.
     - 'lemma_counts': Frequencies of lemmatized words.
+
+
     """
     text = load_html_file(filename)
 
     if text is None:
-        print("Could not find div element.")
+        logger.warning("Could not find div element.")
         # Return a default dictionary with all values set to 0 or an empty list
         return {
             "word_count": 0,  # word_count including stop words
@@ -107,16 +108,17 @@ def s_file_analysis(filename, stop_words=None):
     }
 
 
-def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
-    """
-    Analyzes all documents in a folder and generates output.
+def s_analysis(
+    folder_path: PathLike,
+    stop_words: list[str] | None = None,
+    nazov_zakonu: str = "",
+) -> None:
+    """Analyze all documents in a folder and generate outputs.
 
-    Parameters:
-    - folder_path (str): The path to the folder containing documents.
-    - stop_words (list): List of stop words to be excluded from analysis.
-    - nazov_zakonu (str): Name of the law, used in plot titles.
-
-    Returns: nothigs
+    Args:
+        folder_path: Path to the folder containing documents.
+        stop_words: Optional stop words excluded from selected metrics.
+        nazov_zakonu: Law name used in chart titles.
 
     Save in the {folder_path}:
         - {key}_lemma_counts.csv, {key}_tag.csv for every analyzed file in the directory
@@ -136,6 +138,7 @@ def s_analysis(folder_path, stop_words=None, nazov_zakonu="") -> None:
 
     Metrics are saved in CSV files, and bar charts and word clouds are generated
     for visual analysis.
+
     """
     output = analyze_documents_in_folder(folder_path, s_file_analysis, stop_words)
     os.chdir(folder_path)
